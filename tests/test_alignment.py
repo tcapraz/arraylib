@@ -5,13 +5,15 @@ from pysudoku_package.alignment import  parse_bowtie2_output
 from pysudoku_package.config import set_up_tmpdir
 
 
-def test_parse_bowtie2_output():
-    experiment = LibraryExperiment(8,30,10,"test_data/gb_ref/", "test_data/bowtie_ref/UTI89", 
-                                    "AGATGTGTATAAGAGACAG", 1, "test_data", "test_data/exp_design.csv",
+def test_parse_bowtie2_output(cdir):
+    experiment = LibraryExperiment(8,30,10,os.path.join(str(cdir),"test_data/gb_ref/"), 
+                                   os.path.join(str(cdir),"test_data/bowtie_ref/UTI89"), 
+                                    "AGATGTGTATAAGAGACAG", 1, os.path.join(str(cdir),"test_data"), 
+                                    os.path.join(str(cdir),"test_data/exp_design.csv"),
                                     True, "CGAGGTCTCT", "CGTACGCTGC", filter_thr=0.05, 
                                     global_filter_thr = 5, min_counts=5)
-    truecontents = open(os.path.join(data_dir,"alignment_result_expected.csv")).read()
-    experiment.alignment = os.path.join(data_dir, "test_alignment.sam")
+    truecontents = open(os.path.join(cdir,"alignment_result_expected.csv")).read()
+    experiment.alignment = os.path.join(cdir, "test_alignment.sam")
     set_up_tmpdir()
 
     try:
