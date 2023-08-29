@@ -26,8 +26,6 @@ jobs:
         run: poetry install
       - name: activate env
         run: source `poetry env info --path`/bin/activate
-      - name: update apt-get
-        run: apt-get update
       - name: install bowtie2
         run: echo -e "Y\n" | apt-get install bowtie2
 
