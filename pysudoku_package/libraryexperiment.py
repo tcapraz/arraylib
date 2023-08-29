@@ -206,14 +206,14 @@ class LibraryExperiment(object):
         filtered_count_mat[self.pools] = counts
         self.filtered_count_mat = filtered_count_mat
         
-    def deconvolve(self, barcode_only=False):
+    def deconvolve(self, barcode_only=False, count_mat="filtered"):
         """
         Deconvolve mutant count matrix and return summary output with 
         genes names.
         
         """
 
-        unambiguous_data, ambiguous_data= get_ambiguity(self)
+        unambiguous_data, ambiguous_data= get_ambiguity(self, count_mat)
         unambiguous_locations =  get_unambiguous_locations(unambiguous_data, self)
         ambiguous_locations = predict_ambiguous_locations(ambiguous_data, self)
         locations = pd.concat([unambiguous_locations, ambiguous_locations])
