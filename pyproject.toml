@@ -19,14 +19,23 @@ scikit-learn = ">=1.1.1"
 numba = ">=0.55.2"
 scipy = ">=1.8.1"
 biopython = ">=1.79"
+Sphinx = { version = "4.2.0", optional = true }
+sphinx-rtd-theme = { version = "1.0.0", optional = true }
+sphinxcontrib-napoleon = { version = "0.7", optional = true }
+nbsphinx = { version = "0.8.9", optional = true }
+jupyter = {version = "*", optional = true}
+adjusttext = "^0.7.3"
 pytest = "*"
-
 
 [tool.poetry.scripts]
 arraylib-run = "pysudoku_package.main:run"
 arraylib-run_on_barcodes = "pysudoku_package.main:run_on_barcodes"
 arraylib-deconvolve = "pysudoku_package.main:deconvolve"
 arraylib-deconvolve_validation = "pysudoku_package.main:deconvolve_validation"
+
+[tool.poetry.extras]
+docs = ["Sphinx", "sphinx-rtd-theme", "sphinxcontrib-napoleon", "nbsphinx"]
+notebook = ["jupyter"]
 
 [build-system]
 requires = ["poetry-core"]
