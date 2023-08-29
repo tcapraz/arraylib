@@ -12,14 +12,14 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: print python version 
-        run: python -V  # Print out python version for debugging
-      - name: install poetry
-        run: pip install poetry
-      - name: pwd
-        run: pwd
-      - name: cd
-        run: cd ../
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run image
+        uses: abatilo/actions-poetry@v2.1.4
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
       - name: install package
         run: poetry install
       - name: activate env
