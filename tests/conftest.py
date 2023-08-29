@@ -6,10 +6,22 @@ import string
 import pandas as pd
 from distutils import dir_util
 
+
+
+@pytest.fixture(scope="session", name="data_dir")
+def data_dir(tmpdir_factory):
+    test_dir = os.path.join(os.path.dirname(__file__), "test_data")
+    tmp_dir = tmpdir_factory.getbasetemp()
+
+    if os.path.isdir(test_dir):
+        dir_util.copy_tree(test_dir, str(tmp_dir))
+
+    return tmp_dir
+
 @pytest.fixture(scope="session", name="experiment")
 def get_example_data():
-    experiment = LibraryExperiment(8,30,10,"test_data/gb_ref/", "test_data/bowtie_ref/UTI89", 
-                                    "AGATGTGTATAAGAGACAG", 1, "test_data", "test_data/exp_design.csv",
+    experiment = LibraryExperiment(8,30,10,os.path.join(str(data_dir),"gb_ref/"), "test_data/bowtie_ref/UTI89", 
+                                    "AGATGTGTATAAGAGACAG", 1, "test_data", os.path.join(str(data_dir),"exp_design.csv"),
                                     True, "CGAGGTCTCT", "CGTACGCTGC", filter_thr=0.05,global_filter_thr=5, min_counts=5)
     
     numpr = 4
@@ -35,14 +47,3 @@ def get_example_data():
     experiment.count_mat = data
 
     return experiment
-
-@pytest.fixture(scope="session")
-def data_dir(tmpdir_factory):
-    test_dir = os.path.join(os.path.dirname(__file__), "test_data")
-    tmp_dir = tmpdir_factory.getbasetemp()
-
-    if os.path.isdir(test_dir):
-        dir_util.copy_tree(test_dir, str(tmp_dir))
-
-    return tmp_dir
-
