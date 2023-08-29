@@ -10,8 +10,8 @@ def test_parse_bowtie2_output():
                                     "AGATGTGTATAAGAGACAG", 1, "test_data", "test_data/exp_design.csv",
                                     True, "CGAGGTCTCT", "CGTACGCTGC", filter_thr=0.05, 
                                     global_filter_thr = 5, min_counts=5)
-    truecontents = open(os.path.join("test_data","alignment_result_expected.csv")).read()
-    experiment.alignment = os.path.join("test_data", "test_alignment.sam")
+    truecontents = open(os.path.join(data_dir,"alignment_result_expected.csv")).read()
+    experiment.alignment = os.path.join(data_dir, "test_alignment.sam")
     set_up_tmpdir()
 
     try:

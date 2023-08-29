@@ -4,6 +4,7 @@ import numpy as np
 import os
 import string
 import pandas as pd
+from distutils import dir_util
 
 @pytest.fixture(scope="session", name="experiment")
 def get_example_data():
@@ -34,3 +35,14 @@ def get_example_data():
     experiment.count_mat = data
 
     return experiment
+
+@pytest.fixture(scope="session")
+def data_dir(tmpdir_factory):
+    test_dir = os.path.join(os.path.dirname(__file__), "test_data")
+    tmp_dir = tmpdir_factory.getbasetemp()
+
+    if os.path.isdir(test_dir):
+        dir_util.copy_tree(test_dir, str(tmp_dir))
+
+    return tmp_dir
+
