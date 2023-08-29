@@ -39,8 +39,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     needs: [set_up]
     steps:
-      - name: cd
-        run: cd tests
       - name: run unit tests
         run: pytest -m "not integtest" 
 
@@ -54,8 +52,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     needs: [set_up]
     steps:
-      - name: cd
-        run: cd tests
       - name: run integration test
         run: pytest -m "integtest"
   
