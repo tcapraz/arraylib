@@ -6,10 +6,10 @@ from pysudoku_package.config import set_up_tmpdir
 
 
 def test_parse_bowtie2_output(cdir):
-    experiment = LibraryExperiment(8,30,10,os.path.join(str(cdir),"test_data/gb_ref/"), 
-                                   os.path.join(str(cdir),"test_data/bowtie_ref/UTI89"), 
-                                    "AGATGTGTATAAGAGACAG", 1, os.path.join(str(cdir),"test_data"), 
-                                    os.path.join(str(cdir),"test_data/exp_design.csv"),
+    experiment = LibraryExperiment(8,30,10,os.path.join(str(cdir),"gb_ref/"), 
+                                   os.path.join(str(cdir),"bowtie_ref/UTI89"), 
+                                    "AGATGTGTATAAGAGACAG", 1, str(cdir), 
+                                    os.path.join(str(cdir),"exp_design.csv"),
                                     True, "CGAGGTCTCT", "CGTACGCTGC", filter_thr=0.05, 
                                     global_filter_thr = 5, min_counts=5)
     truecontents = open(os.path.join(cdir,"alignment_result_expected.csv")).read()
@@ -18,7 +18,7 @@ def test_parse_bowtie2_output(cdir):
 
     try:
         parse_bowtie2_output(experiment)
-        contents = open(os.path.join("temp","alignment_result.csv")).read()
+        contents = open(os.path.join(str(cdir),"temp","alignment_result.csv")).read()
     finally:
-        os.remove(os.path.join("temp","alignment_result.csv"))
+        os.remove(os.path.join(str(cdir),"temp","alignment_result.csv"))
     assert contents == truecontents

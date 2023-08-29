@@ -10,18 +10,18 @@ from distutils import dir_util
 
 @pytest.fixture(scope="session", name="cdir")
 def current_dir():
-    #test_dir = os.path.join(os.path.dirname(__file__), "test_data")
+    test_dir = os.path.join(os.path.dirname(__file__), "test_data")
     # tmp_dir = tmpdir_factory.getbasetemp()
 
     # if os.path.isdir(test_dir):
     #     dir_util.copy_tree(test_dir, str(tmp_dir))
 
-    return os.path.dirname(__file__)
+    return test_dir
 
 @pytest.fixture(scope="session", name="experiment")
 def get_example_data(cdir):
-    experiment = LibraryExperiment(8,30,10,os.path.join(str(cdir),"test_data/gb_ref/"), os.path.join(str(cdir),"test_data/bowtie_ref/UTI89"), 
-                                    "AGATGTGTATAAGAGACAG", 1, os.path.join(str(cdir),"test_data"), os.path.join(str(cdir),"test_data/exp_design.csv"),
+    experiment = LibraryExperiment(8,30,10,os.path.join(str(cdir),"gb_ref/"), os.path.join(str(cdir),"bowtie_ref/UTI89"), 
+                                    "AGATGTGTATAAGAGACAG", 1, str(cdir), os.path.join(str(cdir),"exp_design.csv"),
                                     True, "CGAGGTCTCT", "CGTACGCTGC", filter_thr=0.05,global_filter_thr=5, min_counts=5)
     
     numpr = 4
