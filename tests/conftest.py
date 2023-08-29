@@ -20,8 +20,8 @@ def current_dir():
 
 @pytest.fixture(scope="session", name="experiment")
 def get_example_data(cdir):
-    experiment = LibraryExperiment(8,30,10,os.path.join(str(current_dir),"test_data/gb_ref/"), os.path.join(str(current_dir),"test_data/bowtie_ref/UTI89"), 
-                                    "AGATGTGTATAAGAGACAG", 1, os.path.join(str(current_dir),"test_data"), os.path.join(str(current_dir),"test_data/exp_design.csv"),
+    experiment = LibraryExperiment(8,30,10,os.path.join(str(cdir),"test_data/gb_ref/"), os.path.join(str(cdir),"test_data/bowtie_ref/UTI89"), 
+                                    "AGATGTGTATAAGAGACAG", 1, os.path.join(str(cdir),"test_data"), os.path.join(str(cdir),"test_data/exp_design.csv"),
                                     True, "CGAGGTCTCT", "CGTACGCTGC", filter_thr=0.05,global_filter_thr=5, min_counts=5)
     
     numpr = 4
