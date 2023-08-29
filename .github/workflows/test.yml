@@ -44,9 +44,17 @@ jobs:
         run: pytest -m "not integtest" 
 
   integration_tests:
-    needs: [before_script]
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.8', '3.9', '3.10']
+        poetry-version: ['1.3.2']
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    needs: [set_up]
     steps:
-      - echo "Running integration test..."
-      - cd tests
-      - pytest -m "integtest"
+      - name: cd
+        run: cd tests
+      - name: run integration test
+        run: pytest -m "integtest"
   
