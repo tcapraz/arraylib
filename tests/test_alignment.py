@@ -18,6 +18,9 @@ def test_parse_bowtie2_output(ddir,cdir):
 
 
     parse_bowtie2_output(experiment)
+    path = "/"
+    dir_list = os.listdir(path)
+    print(dir_list)
     contents = open(os.path.join(str(cdir),"temp","alignment_result.csv")).read()
  
     os.remove(os.path.join(str(cdir),"temp","alignment_result.csv"))
