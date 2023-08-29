@@ -18,38 +18,41 @@ cache:
   paths:
     - .cache/pip
     - venv/
+jobs:
+  before_script:
+    steps:
+      - python -V  # Print out python version for debugging
+      - pip install poetry
+      - poetry install
+      - source `poetry env info --path`/bin/activate
+      
+      - apt-get update
+      - echo -e "Y\n" | apt-get install bowtie2
+      #- pip install pandas
+      #- pip install numpy
+      #- pip install numba
+      #- pip install psutil
+      #- pip install biopython
+      #- pip install regex
+      #- pip install pytest
+      #- pip install scipy
+      #- pip install scikit-learn
+      #- pip install matplotlib
+      #- pip install click
 
-before_script:
-  - python -V  # Print out python version for debugging
-  - pip install poetry
-  - poetry install
-  - source `poetry env info --path`/bin/activate
+
+
+  unit_tests:
+    needs: [before_script]
+    steps:
+      - echo "Running unit tests..."
+      - cd tests
+      - pytest -m "not integtest" 
+
+  integration_tests:
+    needs: [before_script]
+    steps:
+      - echo "Running integration test..."
+      - cd tests
+      - pytest -m "integtest"
   
-  - apt-get update
-  - echo -e "Y\n" | apt-get install bowtie2
-  #- pip install pandas
-  #- pip install numpy
-  #- pip install numba
-  #- pip install psutil
-  #- pip install biopython
-  #- pip install regex
-  #- pip install pytest
-  #- pip install scipy
-  #- pip install scikit-learn
-  #- pip install matplotlib
-  #- pip install click
-
-
-
-unit_tests:
-  script:
-    - echo "Running unit tests..."
-    - cd tests
-    - pytest -m "not integtest" 
-
-integration_tests:
-  script:
-    - echo "Running integration test..."
-    - cd tests
-    - pytest -m "integtest"
-
