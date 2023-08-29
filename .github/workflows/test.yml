@@ -1,4 +1,5 @@
-
+name: Push
+on: [push]
 
 image: python:3.10
 
