@@ -29,7 +29,7 @@ def get_ambiguity(experiment, count_mat="filtered"):
     # get only columns with read counts, so should also work with the pool_presence_table containing reads.
   
     dims = experiment.pool_dims
-    if count_mat == "filtered"
+    if count_mat == "filtered":
         data = experiment.filtered_count_mat
     
     pool_reads = data[experiment.pools].astype(int)
