@@ -16,9 +16,9 @@ def test_parse_bowtie2_output(ddir,cdir):
     experiment.alignment = os.path.join(ddir, "test_alignment.sam")
     set_up_tmpdir()
 
-    try:
-        parse_bowtie2_output(experiment)
-        contents = open(os.path.join(str(cdir),"temp","alignment_result.csv")).read()
-    finally:
-        os.remove(os.path.join(str(cdir),"temp","alignment_result.csv"))
+
+    parse_bowtie2_output(experiment)
+    contents = open(os.path.join(str(cdir),"temp","alignment_result.csv")).read()
+ 
+    os.remove(os.path.join(str(cdir),"temp","alignment_result.csv"))
     assert contents == truecontents
