@@ -40,8 +40,8 @@ jobs:
     needs: [set_up]
     steps:
       - name: run unit tests
-        run: pytest -m "not integtest" 
-
+        run: poetry run pytest -m "not integtest" 
+        
   integration_tests:
     strategy:
       fail-fast: false
@@ -53,5 +53,5 @@ jobs:
     needs: [set_up]
     steps:
       - name: run integration test
-        run: pytest -m "integtest"
+        run: poetry run pytest -m "integtest"
   
