@@ -18,6 +18,7 @@ class LibraryExperiment(object):
         """
         LibraryExperiment class used to perform individual analysis steps and
         store intermediate results.
+        
         Parameters
         ----------
         cores : int
