@@ -15,13 +15,8 @@ Contents
 
 .. toctree::
 
-   usage
+   notebooks/run_test_data
    api
    
-.. toctree::
-   :maxdepth: 2
-   :caption: Tutorials:
-
-   notebooks/run_test_data
 
 
