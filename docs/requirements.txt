@@ -4,3 +4,4 @@ nbsphinx
 pandas
 numba
 scipy
+biopython
