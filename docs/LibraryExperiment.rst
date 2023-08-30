@@ -3,6 +3,6 @@ LibraryExperiment
 
 
 
-.. automodule:: LibraryExperiment
+.. automodule:: arraylib.libraryexperiment
    :members:
 
