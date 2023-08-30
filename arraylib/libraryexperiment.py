@@ -102,159 +102,159 @@ class LibraryExperiment(object):
 
 
 
-    def get_genomic_seq(self, barcode_only=False):
-        
-        """ 
-        Trims all the reads based on the presence of the transposon recognizing
-        sequence. Only keeps the downstream genomic sequences after the 
-        transposon border site.
-        
-        Trimmed genomic sequences are written to temp/trimmed_sequences.fastq
-        
-        """
-        
-        self.input_file_paths, self.input_file_names = get_input_files(self)
-
-        set_up_tmpdir()
-        
-        # if barcode only mode is run no need to trim sequences for alignment
-        if barcode_only:
-            pool = mp.Pool(self.cores)
-    
-            paths = pool.starmap_async(detect_barcodes, zip(self.input_file_paths, repeat(self))).get()
-    
-            pool.close()
-            pool.join()
+        def get_genomic_seq(self, barcode_only=False):
             
-            barcode_paths = [item for item in paths]
-    
-            file_compiler(os.path.join("temp", "alignment_result.csv"), barcode_paths)
-
-        else:
-            pool = mp.Pool(self.cores)
-    
-            paths = pool.starmap_async(read_data, zip(self.input_file_paths, repeat(self))).get()
-    
-            pool.close()
-            pool.join()
+            """ 
+            Trims all the reads based on the presence of the transposon recognizing
+            sequence. Only keeps the downstream genomic sequences after the 
+            transposon border site.
             
-            trimmed_paths = [item for item in paths]
-    
-            file_compiler(os.path.join("temp", "trimmed_sequences.fastq"), trimmed_paths)
-
-    
-    def align_genomic_seq(self):
-        """
-        Aligns trimmed reads to reference using bowtie2. The output of bowtie2 
-        is parsed and stored in alignment_result.csv.
-        """
-        set_up_tmpdir()
-
-        # clean previous alignments
-        align_res = os.path.join("temp", "alignment_result.csv")
-        if os.path.exists(align_res):
-            os.remove(align_res)
+            Trimmed genomic sequences are written to temp/trimmed_sequences.fastq
             
-        run_bowtie2(self)
-        parse_bowtie2_output(self)
+            """
+            
+            self.input_file_paths, self.input_file_names = get_input_files(self)
     
-    def write_count_matrix(self, barcode_only=False):
-        """
-        Assembles count matrix from bowtie2 alignment. Filters out spurious 
-        barcodes with very little read counts for a given coordinate.
-
-        """
-        bowtie_res = pd.read_csv(self.bowtie_res, 
-                               names=["id_in_pool","pool","coord","orientation","barcode", "ref"],
-                               dtype= {"id_in_pool": str, "pool": str, "coord":str, "orientation":str, "barcode":str, "ref":str})
+            set_up_tmpdir()
             
-        bowtie_res["barcode"] = bowtie_res["barcode"].astype(str)
+            # if barcode only mode is run no need to trim sequences for alignment
+            if barcode_only:
+                pool = mp.Pool(self.cores)
+        
+                paths = pool.starmap_async(detect_barcodes, zip(self.input_file_paths, repeat(self))).get()
+        
+                pool.close()
+                pool.join()
+                
+                barcode_paths = [item for item in paths]
+        
+                file_compiler(os.path.join("temp", "alignment_result.csv"), barcode_paths)
     
-        # barcodes that were not found are treated the same (can't distinguish between them)
-        # concat orientation, coordinate and barcode to create unique ids
-        bowtie_res["unique_id"] = bowtie_res["orientation"].astype(str) +";" +\
-            bowtie_res["coord"].astype(str)+ ";"   + bowtie_res["barcode"].astype(str)+ ";"  + bowtie_res["ref"].astype(str)
+            else:
+                pool = mp.Pool(self.cores)
         
-        encoded_ids = get_hash_ids(bowtie_res["unique_id"])
+                paths = pool.starmap_async(read_data, zip(self.input_file_paths, repeat(self))).get()
         
-        assert len(np.unique(encoded_ids)) == len(np.unique(bowtie_res["unique_id"])), "Hashed ids not unique!"
-
-        count_mat = get_count_matrix(encoded_ids, bowtie_res, self)
-        self.raw_count_mat = count_mat
-        if barcode_only:
-            self.count_mat = count_mat
-            self.filtered_count_mat = count_mat
-            count_mat.to_csv("count_matrix.csv", index=False, float_format="%.0f")
-        else:
-            filtered_count_mat = filter_barcodes(count_mat, self)
-            filtered_count_mat.to_csv("count_matrix.csv", index=False, float_format="%.0f")
-            
-            self.count_mat = filtered_count_mat
-
-        # normalize count matrix to counts per million
-        normalized_count_mat = self.count_mat.copy()
-        normalized_count_mat_ = normalized_count_mat.copy()
-        counts = normalized_count_mat_[self.pools].values.astype(float)
+                pool.close()
+                pool.join()
+                
+                trimmed_paths = [item for item in paths]
         
-        counts = (counts/np.sum(counts, axis=0))*1e6
-        normalized_count_mat_[self.pools] = counts
-        
-        self.normalized_count_mat = normalized_count_mat_
-        
-        # apply count filters to reduce noise
-        counts = global_filter_counts(counts, thr=self.global_filter_thr)
-        counts = local_filter_counts(counts, thr=self.filter_thr)
-        filtered_count_mat = normalized_count_mat_.copy()
-        filtered_count_mat[self.pools] = counts
-        self.filtered_count_mat = filtered_count_mat
-        
-    def deconvolve(self, barcode_only=False, count_mat="filtered"):
-        """
-        Deconvolve mutant count matrix and return summary output with 
-        genes names.
-        
-        """
-
-        unambiguous_data, ambiguous_data= get_ambiguity(self, count_mat)
-        unambiguous_locations =  get_unambiguous_locations(unambiguous_data, self)
-        ambiguous_locations = predict_ambiguous_locations(ambiguous_data, self)
-        locations = pd.concat([unambiguous_locations, ambiguous_locations])
-        temppath = os.path.join("temp", "locations.csv")
-        locations.to_csv(temppath)
-       
-        if barcode_only:
-            locations.drop(["Reference", "Feature", "Orientation"], axis=1, inplace=True)
-            locations.to_csv("barcode_location_summary.csv", index=False)
-            
-            transposed_barcode_summary = transpose_barcode_summary(self, locations)
-            self.transposed_barcode_summary = transposed_barcode_summary
-            transposed_barcode_summary.to_csv("well_barcode_summary.csv", index=False)
-
-        else:
-            location_summary = coords2genes(self, locations)
-            self.location_summary = location_summary
-            location_summary.to_csv("mutant_location_summary.csv", index=False)
-            
-            transposed_location_summary = transpose_location_summary(self, location_summary)
-            self.transposed_location_summary = transposed_location_summary
-            transposed_location_summary.to_csv("well_location_summary.csv", index=False)
-        
-    def deconvolve_validation(self, barcode_only=False):
-        """
-        Deconvolve mutant count matrix and return summary output with 
-        genes names.
-        
-        """
-        # normalize to library size and filter low reads
-
-        
+                file_compiler(os.path.join("temp", "trimmed_sequences.fastq"), trimmed_paths)
     
-        unambiguous_data, ambiguous_data= get_ambiguity(self)
-        unambiguous_locations =  get_unambiguous_locations(unambiguous_data, self)
-        ambiguous_locations = predict_ambiguous_locations(ambiguous_data, self)
-        locations = pd.concat([unambiguous_locations, ambiguous_locations])
-        temppath = os.path.join("temp", "locations.csv")
-        locations.to_csv(temppath)
+        
+        def align_genomic_seq(self):
+            """
+            Aligns trimmed reads to reference using bowtie2. The output of bowtie2 
+            is parsed and stored in alignment_result.csv.
+            """
+            set_up_tmpdir()
+    
+            # clean previous alignments
+            align_res = os.path.join("temp", "alignment_result.csv")
+            if os.path.exists(align_res):
+                os.remove(align_res)
+                
+            run_bowtie2(self)
+            parse_bowtie2_output(self)
+        
+        def write_count_matrix(self, barcode_only=False):
+            """
+            Assembles count matrix from bowtie2 alignment. Filters out spurious 
+            barcodes with very little read counts for a given coordinate.
+    
+            """
+            bowtie_res = pd.read_csv(self.bowtie_res, 
+                                   names=["id_in_pool","pool","coord","orientation","barcode", "ref"],
+                                   dtype= {"id_in_pool": str, "pool": str, "coord":str, "orientation":str, "barcode":str, "ref":str})
+                
+            bowtie_res["barcode"] = bowtie_res["barcode"].astype(str)
+        
+            # barcodes that were not found are treated the same (can't distinguish between them)
+            # concat orientation, coordinate and barcode to create unique ids
+            bowtie_res["unique_id"] = bowtie_res["orientation"].astype(str) +";" +\
+                bowtie_res["coord"].astype(str)+ ";"   + bowtie_res["barcode"].astype(str)+ ";"  + bowtie_res["ref"].astype(str)
+            
+            encoded_ids = get_hash_ids(bowtie_res["unique_id"])
+            
+            assert len(np.unique(encoded_ids)) == len(np.unique(bowtie_res["unique_id"])), "Hashed ids not unique!"
+    
+            count_mat = get_count_matrix(encoded_ids, bowtie_res, self)
+            self.raw_count_mat = count_mat
+            if barcode_only:
+                self.count_mat = count_mat
+                self.filtered_count_mat = count_mat
+                count_mat.to_csv("count_matrix.csv", index=False, float_format="%.0f")
+            else:
+                filtered_count_mat = filter_barcodes(count_mat, self)
+                filtered_count_mat.to_csv("count_matrix.csv", index=False, float_format="%.0f")
+                
+                self.count_mat = filtered_count_mat
+    
+            # normalize count matrix to counts per million
+            normalized_count_mat = self.count_mat.copy()
+            normalized_count_mat_ = normalized_count_mat.copy()
+            counts = normalized_count_mat_[self.pools].values.astype(float)
+            
+            counts = (counts/np.sum(counts, axis=0))*1e6
+            normalized_count_mat_[self.pools] = counts
+            
+            self.normalized_count_mat = normalized_count_mat_
+            
+            # apply count filters to reduce noise
+            counts = global_filter_counts(counts, thr=self.global_filter_thr)
+            counts = local_filter_counts(counts, thr=self.filter_thr)
+            filtered_count_mat = normalized_count_mat_.copy()
+            filtered_count_mat[self.pools] = counts
+            self.filtered_count_mat = filtered_count_mat
+            
+        def deconvolve(self, barcode_only=False, count_mat="filtered"):
+            """
+            Deconvolve mutant count matrix and return summary output with 
+            genes names.
+            
+            """
+    
+            unambiguous_data, ambiguous_data= get_ambiguity(self, count_mat)
+            unambiguous_locations =  get_unambiguous_locations(unambiguous_data, self)
+            ambiguous_locations = predict_ambiguous_locations(ambiguous_data, self)
+            locations = pd.concat([unambiguous_locations, ambiguous_locations])
+            temppath = os.path.join("temp", "locations.csv")
+            locations.to_csv(temppath)
+           
+            if barcode_only:
+                locations.drop(["Reference", "Feature", "Orientation"], axis=1, inplace=True)
+                locations.to_csv("barcode_location_summary.csv", index=False)
+                
+                transposed_barcode_summary = transpose_barcode_summary(self, locations)
+                self.transposed_barcode_summary = transposed_barcode_summary
+                transposed_barcode_summary.to_csv("well_barcode_summary.csv", index=False)
+    
+            else:
+                location_summary = coords2genes(self, locations)
+                self.location_summary = location_summary
+                location_summary.to_csv("mutant_location_summary.csv", index=False)
+                
+                transposed_location_summary = transpose_location_summary(self, location_summary)
+                self.transposed_location_summary = transposed_location_summary
+                transposed_location_summary.to_csv("well_location_summary.csv", index=False)
+            
+        def deconvolve_validation(self, barcode_only=False):
+            """
+            Deconvolve mutant count matrix and return summary output with 
+            genes names.
+            
+            """
+            # normalize to library size and filter low reads
+    
+            
+        
+            unambiguous_data, ambiguous_data= get_ambiguity(self)
+            unambiguous_locations =  get_unambiguous_locations(unambiguous_data, self)
+            ambiguous_locations = predict_ambiguous_locations(ambiguous_data, self)
+            locations = pd.concat([unambiguous_locations, ambiguous_locations])
+            temppath = os.path.join("temp", "locations.csv")
+            locations.to_csv(temppath)
       
 
 # experiment = LibraryExperiment(8,30,10,"gb_ref/UTI89.gb", "bowtie_ref/UTI89", 
