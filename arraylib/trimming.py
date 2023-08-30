@@ -6,7 +6,7 @@ from numba import njit
 from pathlib import Path
 import gzip 
 
-from pysudoku_package.io import txt_writer
+from arraylib.io import txt_writer
 
 
 @njit

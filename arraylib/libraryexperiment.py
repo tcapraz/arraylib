@@ -1,41 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from pysudoku_package.config import get_input_files, get_pool_dicts, set_up_tmpdir
-from pysudoku_package.io import txt_writer, file_compiler
-from pysudoku_package.alignment import run_bowtie2, parse_bowtie2_output
-from pysudoku_package.trimming import read_data, detect_barcodes
-from pysudoku_package.generate_count_matrix import  get_count_matrix, get_hash_ids, filter_barcodes, local_filter_counts, global_filter_counts
-from pysudoku_package.deconvolution import get_ambiguity, get_unambiguous_locations, coords2genes, transpose_location_summary, transpose_barcode_summary
-from pysudoku_package.predict_locations import predict_ambiguous_locations
+from arraylib.config import get_input_files, get_pool_dicts, set_up_tmpdir
+from arraylib.io import txt_writer, file_compiler
+from arraylib.alignment import run_bowtie2, parse_bowtie2_output
+from arraylib.trimming import read_data, detect_barcodes
+from arraylib.generate_count_matrix import  get_count_matrix, get_hash_ids, filter_barcodes, local_filter_counts, global_filter_counts
+from arraylib.deconvolution import get_ambiguity, get_unambiguous_locations, coords2genes, transpose_location_summary, transpose_barcode_summary
+from arraylib.predict_locations import predict_ambiguous_locations
 import multiprocessing as mp
 from itertools import repeat
 import os
 import pandas as pd
 import numpy as np
 
-class LibraryExperiment(object):
-
-    
-    def __init__(self, 
-                 cores, 
-                 map_quality, 
-                 seq_quality, 
-                 gb_ref, 
-                 bowtie_ref, 
-                 tn_seq,
-                 tn_mismatches,
-                 input_dir, 
-                 exp_design,
-                 use_barcodes, 
-                 bar_upstream,
-                 bar_downstream,
-                 filter_thr,
-                 global_filter_thr,
-                 min_counts):
+class LibraryExperiment(object): 
         """
-        
-
+        LibraryExperiment class used to perform individual analysis steps and
+        store intermediate results.
         Parameters
         ----------
         cores : int
@@ -74,6 +56,23 @@ class LibraryExperiment(object):
 
 
         """
+        def __init__(self, 
+                     cores, 
+                     map_quality, 
+                     seq_quality, 
+                     gb_ref, 
+                     bowtie_ref, 
+                     tn_seq,
+                     tn_mismatches,
+                     input_dir, 
+                     exp_design,
+                     use_barcodes, 
+                     bar_upstream,
+                     bar_downstream,
+                     filter_thr,
+                     global_filter_thr,
+                     min_counts):
+        
         # store input parameters
         self.cores = cores
         self.map_quality = map_quality
