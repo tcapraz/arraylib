@@ -4,7 +4,7 @@ version = "0.30.0"
 description = "Tool to computationally deconvolve combinatorially pooled arrayed random mutagenesis libraries"
 authors = ["capraz <tuemayc@hotmail.com>"]
 readme = "README.md"
-packages = [{include = "pysudoku_package"}]
+packages = [{include = "arraylib"}]
 license = "MIT"
 
 [tool.pytest.ini_options]
