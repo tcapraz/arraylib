@@ -14,9 +14,17 @@ Contents
 --------
 
 .. toctree::
+   :maxdepth: 2
+   :caption: API:
 
+   LibraryExperiment
+
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Tutorial:
    notebooks/run_test_data
-   api
+
    
 
 
