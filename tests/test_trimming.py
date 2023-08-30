@@ -47,15 +47,15 @@ def test_barcode_extractor():
     assert barcode_extractor(up, down, seq) == (0,9)
 
 
-def test_read_data():
-    experiment = LibraryExperiment(8,30,10,"test_data/gb_ref/", "test_data/bowtie_ref/UTI89", 
-                                    "AGATGTGTATAAGAGACAG", 1, "test_data", "test_data/exp_design.csv",
+def test_read_data(ddir):
+    experiment = LibraryExperiment(8,30,10,os.path.join(str(ddir),"gb_ref/"), os.path.join(str(ddir),"bowtie_ref/UTI89"), 
+                                    "AGATGTGTATAAGAGACAG", 1, str(ddir), os.path.join(str(ddir),"exp_design.csv"),
                                     True, "CGAGGTCTCT", "CGTACGCTGC", filter_thr = 0.05,
                                     global_filter_thr = 5, min_counts=5)
-    truecontents = open(os.path.join("test_data","trimmed_expected.fastq")).read()
+    truecontents = open(os.path.join(str(ddir),"trimmed_expected.fastq")).read()
     set_up_tmpdir()
     try:
-        outfile_path = read_data(os.path.join("test_data","test.fastq"), experiment)
+        outfile_path = read_data(os.path.join(str(ddir),"test.fastq"), experiment)
         contents = open(outfile_path).read()
     finally:
             os.remove(outfile_path)

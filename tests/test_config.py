@@ -24,7 +24,7 @@ def test_get_input_files(ddir):
                                     True, "CGAGGTCTCT", "CGTACGCTGC", filter_thr=0.05, 
                                     global_filter_thr = 5, min_counts=5)
     
-    expected_paths = ['test_data/test.fastq', 'test_data/test2.fastq']
+    expected_paths = [os.path.join(str(ddir),'test.fastq'), os.path.join(str(ddir),'test2.fastq')]
     expected_names = ['test', 'test2']
     paths, names = get_input_files(experiment)
     assert expected_paths == paths

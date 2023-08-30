@@ -26,8 +26,8 @@ def test_table_lookup():
     assert all(table_lookup(ids[1], ids)    == np.array(1))
 
 
-def test_get_pool_table_line():
-    bowtie_res =   pd.read_csv(os.path.join("test_data","alignment_result_expected.csv"),
+def test_get_pool_table_line(ddir):
+    bowtie_res =   pd.read_csv(os.path.join(str(ddir),"alignment_result_expected.csv"),
                                names=["id_in_pool","pool","coord","orientation","barcode", "reference"])
 
     pools =[3]
@@ -43,7 +43,7 @@ def test_get_pool_table_line():
         bowtie_res["coord"].astype(str) + ";"  + bowtie_res["barcode"].astype(str)+ ";" + bowtie_res["reference"]
     
     all_ids = get_hash_ids(bowtie_res["unique_id"])
-    count, id_ = get_pool_table_line (all_ids[0], bowtie_res.values, all_ids, pools, poolidx_dict)
+    count, id_ = get_pool_table_line(all_ids[0], bowtie_res.values, all_ids, pools, poolidx_dict)
     
     assert count == 6
     assert id_ == bowtie_res["unique_id"][0]
