@@ -49,12 +49,12 @@ def test_get_pool_table_line():
     assert id_ == bowtie_res["unique_id"][0]
 
 
-def test_get_count_matrix():
+def test_get_count_matrix(ddir):
     experiment = LibraryExperiment(8,30,10,"gb_ref/", "bowtie_ref/UTI89", 
-                                    "AGATGTGTATAAGAGACAG", 1, "test_data", "test_data/exp_design.csv",
+                                    "AGATGTGTATAAGAGACAG", 1, "test_data", os.path.join(str(ddir),"exp_design.csv"),
                                     True, "CGAGGTCTCT", "CGTACGCTGC", filter_thr=0.05, 
                                     global_filter_thr = 5, min_counts=5)
-    bowtie_res =   pd.read_csv(os.path.join("test_data","alignment_result_expected.csv"),
+    bowtie_res =   pd.read_csv(os.path.join(str(ddir),"alignment_result_expected.csv"),
                                names=["id_in_pool","pool","coord","orientation","barcode", "reference"])
 
     experiment.pools =[3]
@@ -73,9 +73,9 @@ def test_get_count_matrix():
     expected = pd.Series([ 61, "+", "ATGACTTGCGGTAAAGAAGA","NC_007946.1", "6"], index = ["Feature", "Orientation" ,"Barcode" ,"Reference", 3])
     assert all(count_mat == expected)
 
-def test_filter_barcodes():
+def test_filter_barcodes(ddir):
     experiment = LibraryExperiment(8,30,10,"gb_ref/", "bowtie_ref/UTI89", 
-                                    "AGATGTGTATAAGAGACAG", 1, "test_data", "test_data/exp_design.csv",
+                                    "AGATGTGTATAAGAGACAG", 1, "test_data", os.path.join(str(ddir),"exp_design.csv"),
                                     True, "CGAGGTCTCT", "CGTACGCTGC", filter_thr=0.05, 
                                     global_filter_thr = 5, min_counts=5)
     
