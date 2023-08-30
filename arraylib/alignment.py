@@ -3,7 +3,7 @@
 import subprocess
 import os
 
-from arraylib.io import txt_writer
+from pysudoku_package.io import txt_writer
 
 
 def parse_bowtie2_output(experiment):

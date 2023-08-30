@@ -1,4 +1,4 @@
-from arraylib.libraryexperiment import LibraryExperiment
+from pysudoku_package.libraryexperiment import LibraryExperiment
 import sys
 import click
 import pandas as pd
