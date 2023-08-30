@@ -14,28 +14,10 @@ import os
 import pandas as pd
 import numpy as np
 
-class LibraryExperiment(object):
-
-    
-    def __init__(self, 
-                 cores, 
-                 map_quality, 
-                 seq_quality, 
-                 gb_ref, 
-                 bowtie_ref, 
-                 tn_seq,
-                 tn_mismatches,
-                 input_dir, 
-                 exp_design,
-                 use_barcodes, 
-                 bar_upstream,
-                 bar_downstream,
-                 filter_thr,
-                 global_filter_thr,
-                 min_counts):
+class LibraryExperiment(object): 
         """
-        
-
+        LibraryExperiment class used to perform individual analysis steps and
+        store intermediate results.
         Parameters
         ----------
         cores : int
@@ -74,6 +56,23 @@ class LibraryExperiment(object):
 
 
         """
+        def __init__(self, 
+                     cores, 
+                     map_quality, 
+                     seq_quality, 
+                     gb_ref, 
+                     bowtie_ref, 
+                     tn_seq,
+                     tn_mismatches,
+                     input_dir, 
+                     exp_design,
+                     use_barcodes, 
+                     bar_upstream,
+                     bar_downstream,
+                     filter_thr,
+                     global_filter_thr,
+                     min_counts):
+        
         # store input parameters
         self.cores = cores
         self.map_quality = map_quality
