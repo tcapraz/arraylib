@@ -31,7 +31,13 @@ def get_ambiguity(experiment, count_mat="filtered"):
     dims = experiment.pool_dims
     if count_mat == "filtered":
         data = experiment.filtered_count_mat
-    
+    if count_mat == "normalized":
+        data = experiment.normalized_count_mat
+    if count_mat == "raw":
+        data = experiment.raw_count_mat
+    if count_mat == "bc_filtered":
+        data = experiment.count_mat
+        
     pool_reads = data[experiment.pools].astype(int)
     
     nonzero_dimcounts = []

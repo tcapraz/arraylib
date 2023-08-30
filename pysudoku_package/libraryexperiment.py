@@ -58,13 +58,18 @@ class LibraryExperiment(object):
             path to file indicating experimental design. The experimental design file 
             should have columns, Filename, Poolname and Pooldimension
         use_barcodes : bool
-            whether to include barcodes
+            whether to perform deconvolution only on barcodes without genomic alignment
         bar_upstream : str
             upstream sequence of barcode
         bar_downstream : str
             downstream sequence of barcode
         filter_thr : float
-            threshold for local filter
+            threshold for local filter. read counts of a given mutant whose 
+            percentage of the max read count is lower than filter_thr are set 
+            to 0
+        global_filter_thr : int
+            threshold for global filter. read counts lower than 
+            global_filter_thr are set to 0
 
 
 
@@ -176,19 +181,17 @@ class LibraryExperiment(object):
         assert len(np.unique(encoded_ids)) == len(np.unique(bowtie_res["unique_id"])), "Hashed ids not unique!"
 
         count_mat = get_count_matrix(encoded_ids, bowtie_res, self)
-        count_mat.to_csv("count_matrix.csv", index=False, float_format="%.0f")
         self.raw_count_mat = count_mat
         if barcode_only:
             self.count_mat = count_mat
             self.filtered_count_mat = count_mat
-
+            count_mat.to_csv("count_matrix.csv", index=False, float_format="%.0f")
         else:
             filtered_count_mat = filter_barcodes(count_mat, self)
-            filtered_count_mat.to_csv("filtered_count_matrix.csv", index=False, float_format="%.0f")
+            filtered_count_mat.to_csv("count_matrix.csv", index=False, float_format="%.0f")
             
             self.count_mat = filtered_count_mat
-        # TODO:
-            # values from normalized count mat copy over to self.count_mat need to fix that
+
         # normalize count matrix to counts per million
         normalized_count_mat = self.count_mat.copy()
         normalized_count_mat_ = normalized_count_mat.copy()
@@ -219,16 +222,7 @@ class LibraryExperiment(object):
         locations = pd.concat([unambiguous_locations, ambiguous_locations])
         temppath = os.path.join("temp", "locations.csv")
         locations.to_csv(temppath)
-        # bad assertions/ count mat is longer than locations as it contains unpredictable mutants
-        # assert np.all(locations["Feature"].values == self.count_mat["Feature"].values), \
-        #     "Coordinates of locations and data not aligned!"
-            
-        # assert np.all(locations["Orientation"].values == self.count_mat["Orientation"].values), \
-        #     "Orientations of locations and data not aligned!"
-            
-        # if "Barcode" in self.count_mat.columns:
-        #     assert np.all(locations["Barcode"].values == self.count_mat["Barcode"].values), \
-        #         "Barcodes of locations and data not aligned!"
+       
         if barcode_only:
             locations.drop(["Reference", "Feature", "Orientation"], axis=1, inplace=True)
             locations.to_csv("barcode_location_summary.csv", index=False)
