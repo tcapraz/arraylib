@@ -73,31 +73,31 @@ class LibraryExperiment(object):
                      global_filter_thr,
                      min_counts):
         
-        # store input parameters
-        self.cores = cores
-        self.map_quality = map_quality
-        self.seq_quality = seq_quality
-        self.gb_ref = gb_ref
-        self.bowtie_ref = bowtie_ref
-        self.tn_seq = tn_seq
-        self.tn_mismatches = tn_mismatches
-        self.input_dir = input_dir
-        self.exp_design = exp_design
-        self.use_barcodes = use_barcodes
-        self.filter_thr = filter_thr
-        self.global_filter_thr = global_filter_thr
-        self.min_counts = min_counts
-        if use_barcodes:
-            self.bar_upstream = bar_upstream
-            self.bar_downstream = bar_downstream
-        
-        # hardcode paths for intermediate results
-        self.bowtie_res = os.path.join("temp", "alignment_result.csv")
-        self.alignment = os.path.join("temp", "alignment.sam")
-        
-        
-        self.file2pool, self.pool_dims = get_pool_dicts(self.exp_design)
-        self.pools = np.sort(np.unique([i for j in list(self.pool_dims.values()) for i in j])).tolist()
+            # store input parameters
+            self.cores = cores
+            self.map_quality = map_quality
+            self.seq_quality = seq_quality
+            self.gb_ref = gb_ref
+            self.bowtie_ref = bowtie_ref
+            self.tn_seq = tn_seq
+            self.tn_mismatches = tn_mismatches
+            self.input_dir = input_dir
+            self.exp_design = exp_design
+            self.use_barcodes = use_barcodes
+            self.filter_thr = filter_thr
+            self.global_filter_thr = global_filter_thr
+            self.min_counts = min_counts
+            if use_barcodes:
+                self.bar_upstream = bar_upstream
+                self.bar_downstream = bar_downstream
+            
+            # hardcode paths for intermediate results
+            self.bowtie_res = os.path.join("temp", "alignment_result.csv")
+            self.alignment = os.path.join("temp", "alignment.sam")
+            
+            
+            self.file2pool, self.pool_dims = get_pool_dicts(self.exp_design)
+            self.pools = np.sort(np.unique([i for j in list(self.pool_dims.values()) for i in j])).tolist()
         
 
 
