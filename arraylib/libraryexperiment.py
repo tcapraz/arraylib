@@ -11,7 +11,7 @@ from arraylib.predict_locations import predict_ambiguous_locations
 import multiprocessing as mp
 from itertools import repeat
 import os
-from pandas import concat, read_csv
+import pandas as pd
 import numpy as np
 
 class LibraryExperiment(object): 
@@ -165,7 +165,7 @@ class LibraryExperiment(object):
             barcodes with very little read counts for a given coordinate.
     
             """
-            bowtie_res = read_csv(self.bowtie_res, 
+            bowtie_res = pd.read_csv(self.bowtie_res, 
                                    names=["id_in_pool","pool","coord","orientation","barcode", "ref"],
                                    dtype= {"id_in_pool": str, "pool": str, "coord":str, "orientation":str, "barcode":str, "ref":str})
                 
@@ -219,7 +219,7 @@ class LibraryExperiment(object):
             unambiguous_data, ambiguous_data= get_ambiguity(self, count_mat)
             unambiguous_locations =  get_unambiguous_locations(unambiguous_data, self)
             ambiguous_locations = predict_ambiguous_locations(ambiguous_data, self)
-            locations = concat([unambiguous_locations, ambiguous_locations])
+            locations = pd.concat([unambiguous_locations, ambiguous_locations])
             temppath = os.path.join("temp", "locations.csv")
             locations.to_csv(temppath)
            
@@ -253,7 +253,7 @@ class LibraryExperiment(object):
             unambiguous_data, ambiguous_data= get_ambiguity(self)
             unambiguous_locations =  get_unambiguous_locations(unambiguous_data, self)
             ambiguous_locations = predict_ambiguous_locations(ambiguous_data, self)
-            locations = concat([unambiguous_locations, ambiguous_locations])
+            locations = pd.concat([unambiguous_locations, ambiguous_locations])
             temppath = os.path.join("temp", "locations.csv")
             locations.to_csv(temppath)
       
