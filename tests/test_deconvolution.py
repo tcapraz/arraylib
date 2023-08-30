@@ -1,8 +1,8 @@
 import pytest
-from pysudoku_package.libraryexperiment import LibraryExperiment
+from arraylib.libraryexperiment import LibraryExperiment
 import numpy as np
 import os
-from pysudoku_package.deconvolution import get_ambiguity, get_unambiguous_locations, coords2genes,transpose_location_summary
+from arraylib.deconvolution import get_ambiguity, get_unambiguous_locations, coords2genes,transpose_location_summary
 import string
 import pandas as pd
 from pandas.testing import assert_frame_equal

@@ -1,6 +1,6 @@
 import pytest
-from pysudoku_package.libraryexperiment import LibraryExperiment
-from pysudoku_package.config import set_up_tmpdir, get_pool_dicts, get_input_files
+from arraylib.libraryexperiment import LibraryExperiment
+from arraylib.config import set_up_tmpdir, get_pool_dicts, get_input_files
 import numpy as np
 import os
 

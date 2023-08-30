@@ -1,8 +1,8 @@
 import pytest
-from pysudoku_package.trimming import seq2bin, binary_subtract, border_finder, barcode_extractor, read_data
-from pysudoku_package.libraryexperiment import LibraryExperiment
-from pysudoku_package.config import set_up_tmpdir
-from pysudoku_package.generate_count_matrix import get_hash_ids, table_lookup, get_pool_table_line, get_count_matrix, filter_barcodes
+from arraylib.trimming import seq2bin, binary_subtract, border_finder, barcode_extractor, read_data
+from arraylib.libraryexperiment import LibraryExperiment
+from arraylib.config import set_up_tmpdir
+from arraylib.generate_count_matrix import get_hash_ids, table_lookup, get_pool_table_line, get_count_matrix, filter_barcodes
 import numpy as np
 import os
 import pandas as pd

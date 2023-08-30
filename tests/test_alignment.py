@@ -1,8 +1,8 @@
 import pytest
-from pysudoku_package.libraryexperiment import LibraryExperiment
+from arraylib.libraryexperiment import LibraryExperiment
 import os
-from pysudoku_package.alignment import  parse_bowtie2_output
-from pysudoku_package.config import set_up_tmpdir
+from arraylib.alignment import  parse_bowtie2_output
+from arraylib.config import set_up_tmpdir
 
 
 def test_parse_bowtie2_output(ddir,cdir):

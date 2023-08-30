@@ -1,7 +1,7 @@
 import pytest
-from pysudoku_package.trimming import seq2bin, binary_subtract, border_finder, barcode_extractor, read_data
-from pysudoku_package.libraryexperiment import LibraryExperiment
-from pysudoku_package.config import set_up_tmpdir
+from arraylib.trimming import seq2bin, binary_subtract, border_finder, barcode_extractor, read_data
+from arraylib.libraryexperiment import LibraryExperiment
+from arraylib.config import set_up_tmpdir
 import numpy as np
 import os
 def test_seq2bin():

@@ -1,5 +1,5 @@
 import pytest
-from pysudoku_package.libraryexperiment import LibraryExperiment
+from arraylib.libraryexperiment import LibraryExperiment
 import numpy as np
 import os
 import string
