@@ -15,10 +15,11 @@ Welcome to arraylib's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Tutorial:
+   :caption: Tutorials:
    
-   notebooks/run_test_data
-
+   notebooks/Installation
+   notebooks/run_test_data_interactive
+   notebooks/run_test_data_cmdline
    
 
 .. bibliography:: references.bib
