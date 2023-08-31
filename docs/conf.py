@@ -34,7 +34,7 @@ extensions = [
     'sphinxcontrib.bibtex'
     ]
     
-bibtex_bibfiles = ['refs.bib']
+bibtex_bibfiles = ['references.bib']
 
 
 # Add any paths that contain templates here, relative to this directory.
