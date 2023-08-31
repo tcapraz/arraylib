@@ -21,4 +21,4 @@ Welcome to arraylib's documentation!
 
    
 
-.. bibliography::
+.. bibliography:: references.bib
