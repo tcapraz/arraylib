@@ -52,6 +52,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#Read-trimming-and-genomic-alignment">Read trimming and genomic alignment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Assembly-of-count-matrix-and-preprocessing">Assembly of count matrix and preprocessing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Deconvolution-and-location-inference">Deconvolution and location inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#References">References</a></li>
 </ul>
 </li>
 </ul>
@@ -431,7 +432,7 @@ div.rendered_html tbody tr:hover {
 </table>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">gb_ref</span></code> path to genbank reference file</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">bowtie_ref</span></code> path to bowtie index files, ending with the basename of your index (if the basename of your index is UTI89 and you store your bowtie2 {cite:p}<code class="docutils literal notranslate"><span class="pre">langmead2012fast</span></code>references in <code class="docutils literal notranslate"><span class="pre">bowtie_ref</span></code> it should be bowtie_ref/UTI89). Please visit <a class="reference external" href="https://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#the-bowtie2-build-indexer">https://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#the-bowtie2-build-indexer</a> for a manual how to create bowtie2 indices.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bowtie_ref</span></code> path to bowtie index files, ending with the basename of your index (if the basename of your index is UTI89 and you store your bowtie2 <a class="reference external" href="#1">[1]</a> references in <code class="docutils literal notranslate"><span class="pre">bowtie_ref</span></code> it should be bowtie_ref/UTI89). Please visit <a class="reference external" href="https://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#the-bowtie2-build-indexer">https://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#the-bowtie2-build-indexer</a> for a manual how to create bowtie2 indices.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">tn_seq</span></code> transposon sequence (e.g. AGATGTGTATAAGAGACAG)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">bar_upstream</span></code> upstream sequence of barcode (e.g. CGAGGTCTCT)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">bar_downstream</span></code> downstream sequence of barcode (e.g. CGTACGCTGC)</p></li>
@@ -1695,6 +1696,10 @@ experiment.deconvolve()
 <p>6144 rows × 15 columns</p>
 </div></div>
 </div>
+</section>
+<section id="References">
+<h2>References<a class="headerlink" href="#References" title="Permalink to this headline"></a></h2>
+<p>[1] Langmead, B. and Salzberg, S.L., 2012. Fast gapped-read alignment with Bowtie 2. Nature methods, 9(4), pp.357-359.</p>
 </section>
 </section>
 
