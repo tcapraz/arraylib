@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to run arraylib-solve on the command line &mdash; arraylib 0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Running arraylib on example data" href="run_test_data_interactive.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> arraylib
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../LibraryExperiment.html">LibraryExperiment</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="run_test_data_interactive.html">Running arraylib on example data</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How to run <code class="docutils literal notranslate"><span class="pre">arraylib-solve</span></code> on the command line</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Input-parameters">Input parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Run-only-on-barcodes">Run only on barcodes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Output">Output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#References">References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">arraylib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>How to run <code class="docutils literal notranslate"><span class="pre">arraylib-solve</span></code> on the command line</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/notebooks/run_test_data_cmdline.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="How-to-run-arraylib-solve-on-the-command-line">
+<h1>How to run <code class="docutils literal notranslate"><span class="pre">arraylib-solve</span></code> on the command line<a class="headerlink" href="#How-to-run-arraylib-solve-on-the-command-line" title="Permalink to this headline"></a></h1>
+<p>To run <code class="docutils literal notranslate"><span class="pre">arraylib-solve</span></code> on a library deconvolution experiment with default parameters run:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>arraylib-run &lt;input_directory&gt; &lt;experimental_design.csv&gt; -c &lt;number_of_cpu_cores_to_use&gt; -gb &lt;path_to_genbank_reference_directory&gt; -br &lt;path_to_bowtie2_indices&gt; -t &lt;transposon_sequence&gt; -bu &lt;upstream_sequence_of_barcodes&gt; -bd &lt;downstream_sequence_of_barcodes&gt;
+</pre></div>
+</div>
+<section id="Input-parameters">
+<h2>Input parameters<a class="headerlink" href="#Input-parameters" title="Permalink to this headline"></a></h2>
+<p>Required parameters:</p>
+<ul class="simple">
+<li><p>input_dir: path to directory holding the input fastq files</p></li>
+<li><p>exp_design: path to csv file indicating experimental design (values should be separated by a comma). The experimental design file should have columns, Filename, Poolname and Pooldimension. (see example in tests/test_data/full_exp_design.csv)</p>
+<ul>
+<li><p>Filename should contain all the unqiue input fastq filenames.</p></li>
+<li><p>Poolname should indicate to which pool a given file belongs. Multiple files per poolname are allowed.</p></li>
+<li><p>Pooldimension indicates the pooling dimension a pool belongs to. All pools sharing the same pooling dimension should have the same string in the Pooldimension column.</p></li>
+</ul>
+</li>
+</ul>
+<p>An example of how an exp_design file could look like:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 41%" />
+<col style="width: 24%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Filename</p></th>
+<th class="head"><p>Poolname</p></th>
+<th class="head"><p>Pooldimension</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>column1.fastq</p></td>
+<td><p>column1</p></td>
+<td><p>columns</p></td>
+</tr>
+<tr class="row-odd"><td><p>column2.fastq</p></td>
+<td><p>column2</p></td>
+<td><p>columns</p></td>
+</tr>
+<tr class="row-even"><td><p>row1.fastq</p></td>
+<td><p>row1</p></td>
+<td><p>rows</p></td>
+</tr>
+<tr class="row-odd"><td><p>row2.fastq</p></td>
+<td><p>row2</p></td>
+<td><p>rows</p></td>
+</tr>
+<tr class="row-even"><td><p>platerow1.fastq</p></td>
+<td><p>platerow1</p></td>
+<td><p>platerows</p></td>
+</tr>
+<tr class="row-odd"><td><p>platerow2.fastq</p></td>
+<td><p>platerow2</p></td>
+<td><p>platerows</p></td>
+</tr>
+<tr class="row-even"><td><p>platecol1.fastq</p></td>
+<td><p>platecol1</p></td>
+<td><p>platecols</p></td>
+</tr>
+<tr class="row-odd"><td><p>platecol2.fastq</p></td>
+<td><p>platecol2</p></td>
+<td><p>platecols</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>-gb path to genbank reference file</p></li>
+<li><p>-br path to bowtie index files, ending with the basename of your index (if the basename of your index is UTI89 and you store your bowtie2 <a class="reference external" href="#1">[1]</a> references in bowtie_ref it should be bowtie_ref/UTI89). Please visit <a class="reference external" href="https://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#the-bowtie2-build-indexer">https://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#the-bowtie2-build-indexer</a> for a manual how to create bowtie2 indices.</p></li>
+<li><p>-t transposon sequence (e.g. AGATGTGTATAAGAGACAG)</p></li>
+<li><p>-bu upstream sequence of barcode (e.g. CGAGGTCTCT)</p></li>
+<li><p>-bd downstream sequence of barcode (e.g. CGTACGCTGC)</p></li>
+</ul>
+<p>Optional parameters:</p>
+<ul class="simple">
+<li><p>-mq minimum bowtie2 alignment quality score for each base to include read</p></li>
+<li><p>-sq minimum phred score for each base to include read</p></li>
+<li><p>-tm number of transposon mismatches allowed</p></li>
+<li><p>-thr threshold for local filter (e.g. a threshold of 0.05 would filter out all reads &lt; 0.05 of the maximum read count for a given mutant)</p></li>
+<li><p>-g_thr threshold for global filter (all reads below g_thr will be set to 0)</p></li>
+</ul>
+</section>
+<section id="Run-only-on-barcodes">
+<h2>Run only on barcodes<a class="headerlink" href="#Run-only-on-barcodes" title="Permalink to this headline"></a></h2>
+<p>If you want to run arraylib-solve only on barcodes without alignment to the reference genome use the following command:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>arraylib-run_on_barcodes &lt;input_directory&gt; &lt;experimental_design.csv&gt; -c &lt;number_of_cpu_cores_to_use&gt;  -bu &lt;upstream_sequence_of_barcodes&gt; -bd &lt;downstream_sequence_of_barcodes&gt;
+</pre></div>
+</div>
+<p>Optional parameters:</p>
+<ul class="simple">
+<li><p>-thr threshold for local filter (e.g. a threshold of 0.05 would filter out all reads &lt; 0.05 of the maximum read count for a given mutant)</p></li>
+<li><p>-g_thr threshold for global filter (all reads below g_thr will be set to 0)</p></li>
+</ul>
+</section>
+<section id="Output">
+<h2>Output<a class="headerlink" href="#Output" title="Permalink to this headline"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">arraylib-solve</span></code> outputs 4 files: * count_matrix.csv: Read counts per pool for each mutant. * filtered_matrix.csv: Read counts per pool for each mutant, but mutants with barcodes with low read counts for a given genomic location are filtered out. * mutant_location_summary.csv: A summary of mutants found in the well plate grid, where each row corresponds to a different mutant. * well_location_summary.csv: A summary of the deconvolved well plate grid, where each row corresponds to a
+different well.</p>
+</section>
+</section>
+<section id="References">
+<h1>References<a class="headerlink" href="#References" title="Permalink to this headline"></a></h1>
+<p>[1] Langmead, B. and Salzberg, S.L., 2012. Fast gapped-read alignment with Bowtie 2. Nature methods, 9(4), pp.357-359.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="run_test_data_interactive.html" class="btn btn-neutral float-left" title="Running arraylib on example data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Tuemay Capraz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
