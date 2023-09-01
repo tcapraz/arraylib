@@ -17,7 +17,7 @@ Welcome to arraylib's documentation!
    :maxdepth: 2
    :caption: Tutorials:
    
-   notebooks/Installation
+   notebooks/installation
    notebooks/run_test_data_interactive
    notebooks/run_test_data_cmdline
    
