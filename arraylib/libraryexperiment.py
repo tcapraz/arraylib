@@ -110,8 +110,14 @@ class LibraryExperiment(object):
             sequence. Only keeps the downstream genomic sequences after the 
             transposon border site.
             
-            Trimmed genomic sequences are written to temp/trimmed_sequences.fastq
+            As side effect a temp folder is created in the current directory
+            trimmed genomic sequences are written to temp/trimmed_sequences.fastq
             
+            Parameters
+            ----------
+            barcode_only : bool
+                whether to perform deconvolution only on barcodes without 
+                genomic alignment
             """
             
             self.input_file_paths, self.input_file_names = get_input_files(self)
@@ -147,7 +153,7 @@ class LibraryExperiment(object):
         def align_genomic_seq(self):
             """
             Aligns trimmed reads to reference using bowtie2. The output of bowtie2 
-            is parsed and stored in alignment_result.csv.
+            is parsed and stored in temp/alignment_result.csv.
             """
             set_up_tmpdir()
     
@@ -161,9 +167,23 @@ class LibraryExperiment(object):
         
         def write_count_matrix(self, barcode_only=False):
             """
-            Assembles count matrix from bowtie2 alignment. Filters out spurious 
-            barcodes with very little read counts for a given coordinate.
-    
+            Assembles count matrix from bowtie2 alignment. Performs counts per 
+            million normalization and filters out spurious 
+            barcodes with very little read counts for a given mutant.
+            Stores 4 differently processed count matrices in LibraryExperiment:
+                raw_count_matrix : contains raw counts for all detected mutants
+                count_matrix : contains raw counts for detected mutants, but 
+                                barcode that have count sums below 
+                                10 % of the max barcode are removed.
+                normalized_count_matrix : cpm normalized count_matrix
+                filtered_count_matrix : local and global filters applied to
+                                        normalized_count_matrix
+            
+            Parameters
+            ----------
+            barcode_only : bool
+                whether to perform deconvolution only on barcodes without 
+                genomic alignment
             """
             bowtie_res = pd.read_csv(self.bowtie_res, 
                                    names=["id_in_pool","pool","coord","orientation","barcode", "ref"],
@@ -214,6 +234,14 @@ class LibraryExperiment(object):
             Deconvolve mutant count matrix and return summary output with 
             genes names.
             
+            Parameters
+            ----------
+            barcode_only : bool
+                whether to perform deconvolution only on barcodes without 
+                genomic alignment
+            count_mat : str
+                which count matrix to use options are (raw, bc_filtered, normalized, filtered)
+            
             """
     
             unambiguous_data, ambiguous_data= get_ambiguity(self, count_mat)
@@ -240,22 +268,27 @@ class LibraryExperiment(object):
                 self.transposed_location_summary = transposed_location_summary
                 transposed_location_summary.to_csv("well_location_summary.csv", index=False)
             
-        def deconvolve_validation(self, barcode_only=False):
-            """
-            Deconvolve mutant count matrix and return summary output with 
-            genes names.
+        # def deconvolve_validation(self, barcode_only=False):
+        #     """
+        #     Deconvolve mutant count matrix and return summary output with 
+        #     genes names.
             
-            """
-            # normalize to library size and filter low reads
+        #     Parameters
+        #     ----------
+        #     barcode_only : bool
+        #         whether to perform deconvolution only on barcodes without 
+        #         genomic alignment
+        #     """
+        #     # normalize to library size and filter low reads
     
             
         
-            unambiguous_data, ambiguous_data= get_ambiguity(self)
-            unambiguous_locations =  get_unambiguous_locations(unambiguous_data, self)
-            ambiguous_locations = predict_ambiguous_locations(ambiguous_data, self)
-            locations = pd.concat([unambiguous_locations, ambiguous_locations])
-            temppath = os.path.join("temp", "locations.csv")
-            locations.to_csv(temppath)
+        #     unambiguous_data, ambiguous_data= get_ambiguity(self)
+        #     unambiguous_locations =  get_unambiguous_locations(unambiguous_data, self)
+        #     ambiguous_locations = predict_ambiguous_locations(ambiguous_data, self)
+        #     locations = pd.concat([unambiguous_locations, ambiguous_locations])
+        #     temppath = os.path.join("temp", "locations.csv")
+        #     locations.to_csv(temppath)
       
 
 # experiment = LibraryExperiment(8,30,10,"gb_ref/UTI89.gb", "bowtie_ref/UTI89", 
