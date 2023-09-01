@@ -48,8 +48,8 @@
 <p class="caption" role="heading"><span class="caption-text">Tutorials:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/run_test_data_interactive.html">How to run arraylib interactively</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/run_test_data_cmdline.html">How to run <code class="docutils literal notranslate"><span class="pre">arraylib-solve</span></code> on the command line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/run_test_data_interactive.html">How to run <code class="docutils literal notranslate"><span class="pre">arraylib</span></code> interactively</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/run_test_data_cmdline.html">How to run <code class="docutils literal notranslate"><span class="pre">arraylib</span></code> on the command line</a></li>
 </ul>
 
         </div>
@@ -135,7 +135,7 @@ global_filter_thr are set to 0</p></li>
 <dt class="sig sig-object py" id="arraylib.libraryexperiment.LibraryExperiment.align_genomic_seq">
 <span class="sig-name descname"><span class="pre">align_genomic_seq</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arraylib.libraryexperiment.LibraryExperiment.align_genomic_seq" title="Permalink to this definition"></a></dt>
 <dd><p>Aligns trimmed reads to reference using bowtie2. The output of bowtie2
-is parsed and stored in alignment_result.csv.</p>
+is parsed and stored in temp/alignment_result.csv.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -143,13 +143,15 @@ is parsed and stored in alignment_result.csv.</p>
 <span class="sig-name descname"><span class="pre">deconvolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">barcode_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_mat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'filtered'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#arraylib.libraryexperiment.LibraryExperiment.deconvolve" title="Permalink to this definition"></a></dt>
 <dd><p>Deconvolve mutant count matrix and return summary output with
 genes names.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="arraylib.libraryexperiment.LibraryExperiment.deconvolve_validation">
-<span class="sig-name descname"><span class="pre">deconvolve_validation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">barcode_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#arraylib.libraryexperiment.LibraryExperiment.deconvolve_validation" title="Permalink to this definition"></a></dt>
-<dd><p>Deconvolve mutant count matrix and return summary output with
-genes names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>barcode_only</strong> (<em>bool</em>) – whether to perform deconvolution only on barcodes without
+genomic alignment</p></li>
+<li><p><strong>count_mat</strong> (<em>str</em>) – which count matrix to use options are (raw, bc_filtered, normalized, filtered)</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -158,14 +160,42 @@ genes names.</p>
 <dd><p>Trims all the reads based on the presence of the transposon recognizing
 sequence. Only keeps the downstream genomic sequences after the
 transposon border site.</p>
-<p>Trimmed genomic sequences are written to temp/trimmed_sequences.fastq</p>
+<p>As side effect a temp folder is created in the current directory
+trimmed genomic sequences are written to temp/trimmed_sequences.fastq</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>barcode_only</strong> (<em>bool</em>) – whether to perform deconvolution only on barcodes without
+genomic alignment</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="arraylib.libraryexperiment.LibraryExperiment.write_count_matrix">
 <span class="sig-name descname"><span class="pre">write_count_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">barcode_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#arraylib.libraryexperiment.LibraryExperiment.write_count_matrix" title="Permalink to this definition"></a></dt>
-<dd><p>Assembles count matrix from bowtie2 alignment. Filters out spurious
-barcodes with very little read counts for a given coordinate.</p>
+<dd><p>Assembles count matrix from bowtie2 alignment. Performs counts per
+million normalization and filters out spurious
+barcodes with very little read counts for a given mutant.
+Stores 4 differently processed count matrices in LibraryExperiment:</p>
+<blockquote>
+<div><p>raw_count_matrix : contains raw counts for all detected mutants
+count_matrix : contains raw counts for detected mutants, but</p>
+<blockquote>
+<div><p>barcode that have count sums below
+10 % of the max barcode are removed.</p>
+</div></blockquote>
+<p>normalized_count_matrix : cpm normalized count_matrix
+filtered_count_matrix : local and global filters applied to</p>
+<blockquote>
+<div><p>normalized_count_matrix</p>
+</div></blockquote>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>barcode_only</strong> (<em>bool</em>) – whether to perform deconvolution only on barcodes without
+genomic alignment</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

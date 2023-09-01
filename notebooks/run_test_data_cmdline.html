@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>How to run arraylib-solve on the command line &mdash; arraylib 0.1 documentation</title>
+  <title>How to run arraylib on the command line &mdash; arraylib 0.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -49,8 +49,8 @@
 <p class="caption" role="heading"><span class="caption-text">Tutorials:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run_test_data_interactive.html">How to run arraylib interactively</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">How to run <code class="docutils literal notranslate"><span class="pre">arraylib-solve</span></code> on the command line</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="run_test_data_interactive.html">How to run <code class="docutils literal notranslate"><span class="pre">arraylib</span></code> interactively</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How to run <code class="docutils literal notranslate"><span class="pre">arraylib</span></code> on the command line</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Input-parameters">Input parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Run-only-on-barcodes">Run only on barcodes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Output">Output</a></li>
@@ -73,7 +73,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>How to run <code class="docutils literal notranslate"><span class="pre">arraylib-solve</span></code> on the command line</li>
+      <li>How to run <code class="docutils literal notranslate"><span class="pre">arraylib</span></code> on the command line</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/notebooks/run_test_data_cmdline.ipynb.txt" rel="nofollow"> View page source</a>
       </li>
@@ -107,9 +107,9 @@
     text-align: unset;
 }
 </style>
-<section id="How-to-run-arraylib-solve-on-the-command-line">
-<h1>How to run <code class="docutils literal notranslate"><span class="pre">arraylib-solve</span></code> on the command line<a class="headerlink" href="#How-to-run-arraylib-solve-on-the-command-line" title="Permalink to this headline"></a></h1>
-<p>To run <code class="docutils literal notranslate"><span class="pre">arraylib-solve</span></code> on a library deconvolution experiment with default parameters run:</p>
+<section id="How-to-run-arraylib-on-the-command-line">
+<h1>How to run <code class="docutils literal notranslate"><span class="pre">arraylib</span></code> on the command line<a class="headerlink" href="#How-to-run-arraylib-on-the-command-line" title="Permalink to this headline"></a></h1>
+<p>To run <code class="docutils literal notranslate"><span class="pre">arraylib</span></code> on a library deconvolution experiment with default parameters run:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>arraylib-run &lt;input_directory&gt; &lt;experimental_design.csv&gt; -c &lt;number_of_cpu_cores_to_use&gt; -gb &lt;path_to_genbank_reference_directory&gt; -br &lt;path_to_bowtie2_indices&gt; -t &lt;transposon_sequence&gt; -bu &lt;upstream_sequence_of_barcodes&gt; -bd &lt;downstream_sequence_of_barcodes&gt;
 </pre></div>
 </div>
@@ -204,8 +204,7 @@
 </section>
 <section id="Output">
 <h2>Output<a class="headerlink" href="#Output" title="Permalink to this headline"></a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">arraylib-solve</span></code> outputs 4 files: * count_matrix.csv: Read counts per pool for each mutant. * filtered_matrix.csv: Read counts per pool for each mutant, but mutants with barcodes with low read counts for a given genomic location are filtered out. * mutant_location_summary.csv: A summary of mutants found in the well plate grid, where each row corresponds to a different mutant. * well_location_summary.csv: A summary of the deconvolved well plate grid, where each row corresponds to a
-different well.</p>
+<p><code class="docutils literal notranslate"><span class="pre">arraylib-solve</span></code> outputs 4 files: * count_matrix.csv: Read counts per pool for each mutant, normalized and filtered. * mutant_location_summary.csv: A summary of mutants found in the well plate grid, where each row corresponds to a different mutant. * well_location_summary.csv: A summary of the deconvolved well plate grid, where each row corresponds to a different well.</p>
 </section>
 <section id="References">
 <h2>References<a class="headerlink" href="#References" title="Permalink to this headline"></a></h2>

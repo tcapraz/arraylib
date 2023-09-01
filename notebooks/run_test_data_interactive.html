@@ -21,7 +21,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="How to run arraylib-solve on the command line" href="run_test_data_cmdline.html" />
+    <link rel="next" title="How to run arraylib on the command line" href="run_test_data_cmdline.html" />
     <link rel="prev" title="Installation" href="installation.html" /> 
 </head>
 
@@ -50,14 +50,14 @@
 <p class="caption" role="heading"><span class="caption-text">Tutorials:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">How to run arraylib interactively</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How to run <code class="docutils literal notranslate"><span class="pre">arraylib</span></code> interactively</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Read-trimming-and-genomic-alignment">Read trimming and genomic alignment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Assembly-of-count-matrix-and-preprocessing">Assembly of count matrix and preprocessing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Deconvolution-and-location-inference">Deconvolution and location inference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#References">References</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="run_test_data_cmdline.html">How to run <code class="docutils literal notranslate"><span class="pre">arraylib-solve</span></code> on the command line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_test_data_cmdline.html">How to run <code class="docutils literal notranslate"><span class="pre">arraylib</span></code> on the command line</a></li>
 </ul>
 
         </div>
@@ -74,7 +74,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>How to run arraylib interactively</li>
+      <li>How to run <code class="docutils literal notranslate"><span class="pre">arraylib</span></code> interactively</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/notebooks/run_test_data_interactive.ipynb.txt" rel="nofollow"> View page source</a>
       </li>
@@ -363,7 +363,7 @@ div.rendered_html tbody tr:hover {
 }
 </style>
 <section id="How-to-run-arraylib-interactively">
-<h1>How to run arraylib interactively<a class="headerlink" href="#How-to-run-arraylib-interactively" title="Permalink to this headline"></a></h1>
+<h1>How to run <code class="docutils literal notranslate"><span class="pre">arraylib</span></code> interactively<a class="headerlink" href="#How-to-run-arraylib-interactively" title="Permalink to this headline"></a></h1>
 <p>First we import the LibraryExperiment class from the package.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
@@ -475,7 +475,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <section id="Read-trimming-and-genomic-alignment">
 <h2>Read trimming and genomic alignment<a class="headerlink" href="#Read-trimming-and-genomic-alignment" title="Permalink to this headline"></a></h2>
-<p>First we detect the transposon sequence in the reads in our input fastq files in <code class="docutils literal notranslate"><span class="pre">input_dir</span></code>. By running:</p>
+<p>We detect the transposon sequence up to the chosen number of <code class="docutils literal notranslate"><span class="pre">tn_mismatches</span></code> in the reads in our input fastq files in <code class="docutils literal notranslate"><span class="pre">input_dir</span></code> in each read using the provided <code class="docutils literal notranslate"><span class="pre">tn_seq</span></code>. The barcode sequences are detected between the provided <code class="docutils literal notranslate"><span class="pre">bar_upstream</span></code> and <code class="docutils literal notranslate"><span class="pre">bar_downstream</span></code> sequences and the genomic part downstream of the transposon sequence of the read is collected in a compiled .fastq file. As a side effect, a <code class="docutils literal notranslate"><span class="pre">temp</span></code> directory is created and the compiled and trimmed reads are saved to
+<code class="docutils literal notranslate"><span class="pre">temp/trimmed_sequences.fastq</span></code>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
@@ -485,8 +486,7 @@ experiment.get_genomic_seq()
 </pre></div>
 </div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">get_genomic_seq()</span></code> first detects the transposon sequence in each read, trims the genomic part of the read and saves it to a compiled fastq file (trimmed_sequences.fastq) in a temp directory in the current working directory.</p>
-<p>Then we use bowtie2 to align the trimmed reads to the reference genome in <code class="docutils literal notranslate"><span class="pre">bowtie_ref</span></code>.</p>
+<p>Then we use bowtie2 to align the trimmed reads to the reference genome in <code class="docutils literal notranslate"><span class="pre">bowtie_ref</span></code>. The output of bowtie2 is parsed and stored in <code class="docutils literal notranslate"><span class="pre">temp/alignment_result.csv</span></code>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
@@ -531,7 +531,7 @@ Generating count matrix with 7000 mutants
 Generated count matrix!
 </pre></div></div>
 </div>
-<p>Our experiment has now 4 different count matrices stored as attributes:</p>
+<p><code class="docutils literal notranslate"><span class="pre">write_count_matrix()</span></code> generates 4 different count matrices stored as attributes:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">raw_count_mat</span></code>: stores the raw reads per mutant and pool</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">count_mat</span></code>: stores the raw reads per mutant and pool, but spurious barcodes are filtered out</p></li>
@@ -1711,7 +1711,7 @@ experiment.deconvolve()
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="run_test_data_cmdline.html" class="btn btn-neutral float-right" title="How to run arraylib-solve on the command line" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="run_test_data_cmdline.html" class="btn btn-neutral float-right" title="How to run arraylib on the command line" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

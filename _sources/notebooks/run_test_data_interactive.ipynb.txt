@@ -5,7 +5,7 @@
    "id": "c008592f",
    "metadata": {},
    "source": [
-    "# How to run arraylib interactively\n",
+    "# How to run `arraylib` interactively\n",
     "\n",
     "First we import the LibraryExperiment class from the package."
    ]
@@ -101,7 +101,8 @@
    "source": [
     "## Read trimming and genomic alignment\n",
     "\n",
-    "First we detect the transposon sequence in the reads in our input fastq files in `input_dir`. By running:"
+    "We detect the transposon sequence up to the chosen number of `tn_mismatches` in the reads in our input fastq files in `input_dir` in each read using the provided `tn_seq`. The barcode sequences are detected between the provided `bar_upstream` and `bar_downstream` sequences and\n",
+    "the genomic part downstream of the transposon sequence of the read is collected in a compiled .fastq file. As a side effect, a `temp` directory is created and the compiled and trimmed reads are saved to `temp/trimmed_sequences.fastq`."
    ]
   },
   {
@@ -120,9 +121,9 @@
    "id": "065e8902",
    "metadata": {},
    "source": [
-    "`get_genomic_seq()` first detects the transposon sequence in each read, trims the genomic part of the read and saves it to a compiled fastq file (trimmed_sequences.fastq) in a temp directory in the current working directory.\n",
     "\n",
-    "Then we use bowtie2 to align the trimmed reads to the reference genome in `bowtie_ref`."
+    "Then we use bowtie2 to align the trimmed reads to the reference genome in `bowtie_ref`. The output of bowtie2 \n",
+    "is parsed and stored in `temp/alignment_result.csv`."
    ]
   },
   {
@@ -184,7 +185,7 @@
    "id": "f8eb3985",
    "metadata": {},
    "source": [
-    "Our experiment has now 4 different count matrices stored as attributes:\n",
+    "`write_count_matrix()` generates 4 different count matrices stored as attributes:\n",
     "\n",
     "* `raw_count_mat`: stores the raw reads per mutant and pool\n",
     "* `count_mat`: stores the raw reads per mutant and pool, but spurious barcodes are filtered out\n",
