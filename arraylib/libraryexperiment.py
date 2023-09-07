@@ -254,7 +254,8 @@ class LibraryExperiment(object):
             if barcode_only:
                 locations.drop(["Reference", "Feature", "Orientation"], axis=1, inplace=True)
                 locations.to_csv("barcode_location_summary.csv", index=False)
-                
+                self.location_summary = locations
+
                 transposed_barcode_summary = transpose_barcode_summary(self, locations)
                 self.transposed_barcode_summary = transposed_barcode_summary
                 transposed_barcode_summary.to_csv("well_barcode_summary.csv", index=False)
