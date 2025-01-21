@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "arraylib-solve"
-version = "0.30.0"
+version = "0.31.0"
 description = "Tool to computationally deconvolve combinatorially pooled arrayed random mutagenesis libraries"
 authors = ["capraz <tuemayc@hotmail.com>"]
 readme = "README.md"
