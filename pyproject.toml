@@ -19,6 +19,7 @@ scikit-learn = ">=1.1.1"
 numba = ">=0.55.2"
 scipy = ">=1.8.1"
 biopython = ">=1.79"
+matplotlib =">=3.5.2"
 Sphinx = { version = "4.2.0", optional = true }
 sphinx-rtd-theme = { version = "1.0.0", optional = true }
 sphinxcontrib-napoleon = { version = "0.7", optional = true }
@@ -32,6 +33,7 @@ arraylib-run = "arraylib.main:run"
 arraylib-run_on_barcodes = "arraylib.main:run_on_barcodes"
 arraylib-deconvolve = "arraylib.main:deconvolve"
 arraylib-deconvolve_validation = "arraylib.main:deconvolve_validation"
+arraylib-plot_required_arraysize = "arraylib.main:plot_required_arraysize"
 
 [tool.poetry.extras]
 docs = ["Sphinx", "sphinx-rtd-theme", "sphinxcontrib-napoleon", "nbsphinx"]
