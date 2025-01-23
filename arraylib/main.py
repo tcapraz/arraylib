@@ -2,7 +2,8 @@ from arraylib.libraryexperiment import LibraryExperiment
 import sys
 import click
 import pandas as pd
-
+import matplotlib
+from arraylib.simulations import simulate_required_arraysize
 
 @click.command()
 @click.argument("input_dir", type=str)
@@ -208,7 +209,7 @@ def run_on_barcodes(input_dir, exp_design, cores,map_quality,seq_quality,
               type=float,
               default=5,
               help='Count filter threshold')
-def deconvolve(count_matrix, exp_design, cores, gb_ref, filter_thr, global_filter_thr) :
+def deconvolve(count_matrix, exp_design, cores, gb_ref, filter_thr, global_filter_thr):
     """ 
     Run pysudoku to infer the most likely locations for each mutant from a 
     precomputed count matrix.
@@ -252,7 +253,7 @@ def deconvolve(count_matrix, exp_design, cores, gb_ref, filter_thr, global_filte
               type=float,
               default=5,
               help='Count filter threshold')
-def deconvolve_validation(count_matrix, exp_design, cores, gb_ref, filter_thr, global_filter_thr) :
+def deconvolve_validation(count_matrix, exp_design, cores, gb_ref, filter_thr, global_filter_thr):
     """ 
     Run pysudoku to infer the most likely locations for each mutant from a 
     precomputed count matrix.
@@ -272,4 +273,108 @@ def deconvolve_validation(count_matrix, exp_design, cores, gb_ref, filter_thr, g
     experiment.count_mat = c
     print("Inferring most likely locations and writing location summary!")
     experiment.deconvolve_validation()
+    print("Done!")
+    
+@click.command()
+@click.argument("tnseeker_output_path", type=str)
+@click.option("--minsize", '-min',
+              metavar='<int>',
+              type=int,
+              default=1000,
+              help='Minimum array size to simulate')
+@click.option("--maxsize", '-max',
+              metavar='<int>',
+              type=int,
+              default=5000,
+              help='Maximum array size to simulate')
+@click.option("--number_of_simulations", '-nsim',
+              metavar='<int>',
+              type=int,
+              default=100,
+              help='Number of simulations of sizes interpolated between minsize and maxsize')
+@click.option("--number_of_repeats", '-niter',
+              metavar='<int>',
+              type=int,
+              default=10,
+              help='Number of repeats of simulations to perform')
+@click.option("--gene_start", '-gstart',
+              metavar='<float>',
+              type=float,
+              default=0.1,
+              help='Gene start')
+@click.option("--gene_end", '-gend',
+              metavar='<float>',
+              type=float,
+              default=0.9,
+              help='Gene end')
+@click.option("--output_filename", '-o',
+              metavar='<str>',
+              type=str,
+              default="arraysize_simulation.csv",
+              help='Path for simulation output file')
+@click.option("--output_plot", '-p',
+              metavar='<str>',
+              type=str,
+              default="arraysize_simulation.pdf",
+              help='Path for simulation output plot')
+def plot_required_arraysize(tnseeker_output_path, minsize, maxsize, number_of_simulations, 
+                                number_of_repeats, gene_start, 
+                                gene_end, output_filename, output_plot):
+    """
+    Run simulation of how many mutants need to be picked for the arrayed 
+    library to reach a certain number of unique genes. Simulations are based 
+    on the mutant distribution of a pooled library. 
+    Genes can be filtered whether only transposon hits are considered between 
+    gene_start and gene_end.
+    
+    Parameters
+    ----------
+    data : str
+        filepath to tnseeker output file all_insertions.csv. 
+        It should contain the columns "Read Counts", "Gene Name" and "Relative Position in Gene (0-1)".
+    minsize : int
+        Minimum array size to simulate.
+    maxsize : int
+       Maximum array size to simulate.
+    number_of_simulations : int
+        Number of simulations to perform between minsize and maxsize. 
+        I.e. if the number_of_simulations is 2, 
+        only simulations of minsize and maxsize are performed. 
+    number_of_repeats : int, optional
+        Number of times the simulations are repeated, by default 30
+    gene_start : float, optional
+        Minimum distance to the start of a gene to be counted as a transposon hit, 
+        by default 0.1
+    gene_end : float, optional
+        Maximum distance to the start of a gene to be counted as a transposon hit, 
+        by default 0.9
+    output_filename : str, optional
+        Filepath for simulation output.
+        by default : arraysize_simulation.csv
+    output_plot : str, optional
+        Filepath for simulation plot.
+        by default : arraysize_simulation.pdf
+        
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with mean and standard deviation of the number of unique genes and array size
+    matplotlib.Axis
+        Scatter plot of unique genes vs size of arrayed library 
+    """
+    matplotlib.use('Agg')
+    print("Simulating unique genes for arraysizes between", str(minsize), 
+          "and", str(maxsize), "!")
+
+    res, plot = simulate_required_arraysize(data = tnseeker_output_path, 
+                                minsize = minsize,
+                                maxsize = maxsize,
+                                number_of_simulations = number_of_simulations, 
+                                number_of_repeats = number_of_repeats, 
+                                gene_start = gene_start,
+                                gene_end = gene_end)
+    print("Plotting results to", str(output_plot), "!")
+    matplotlib.pyplot.savefig(output_plot)
+    print("Saving results to", str(output_filename), "!")
+    res.to_csv(output_filename, index=False)
     print("Done!")
