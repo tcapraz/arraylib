@@ -3,7 +3,7 @@ import sys
 import click
 import pandas as pd
 import matplotlib
-from arraylib.simulations import simulate_required_arraysize
+from arraylib.simulations import simulate_required_arraysize, simulate_deconvolution, plot_precision_recall
 
 @click.command()
 @click.argument("input_dir", type=str)
@@ -375,6 +375,92 @@ def plot_required_arraysize(tnseeker_output_path, minsize, maxsize, number_of_si
                                 gene_end = gene_end)
     print("Plotting results to", str(output_plot), "!")
     matplotlib.pyplot.savefig(output_plot)
+    print("Saving results to", str(output_filename), "!")
+    res.to_csv(output_filename, index=False)
+    print("Done!")
+    
+@click.command()
+@click.argument("tnseeker_output_path", type=str)
+@click.option("--minsize", '-min',
+              metavar='<int>',
+              type=int,
+              default=10,
+              help='Minimum grid size to simulate')
+@click.option("--maxsize", '-max',
+              metavar='<int>',
+              type=int,
+              default=20,
+              help='Maximum grid size to simulate')
+@click.option("--number_of_simulations", '-nsim',
+              metavar='<int>',
+              type=int,
+              default=100,
+              help='Number of simulations of sizes interpolated between minsize and maxsize')
+@click.option("--output_filename", '-o',
+              metavar='<str>',
+              type=str,
+              default="accuracy_simulation.csv",
+              help='Path for simulation output file')
+@click.option("--output_plot", '-p',
+              metavar='<str>',
+              type=str,
+              default="accuracy_simulation.pdf",
+              help='Base path for simulation output plot')
+def plot_expected_deconvolution_accuracy(tnseeker_output_path, 
+                                         minsize, 
+                                         maxsize, 
+                                         number_of_simulations, 
+                                         output_filename, 
+                                         output_plot):
+    """
+    Run simulations of count matrices followed by deconvolution. For each simulation
+    precision and recall are calculated for a 3D and 4D grid of well plates. 
+    Simulations are based 
+    on the mutant distribution of a pooled library. 
+    
+    Parameters
+    ----------
+    data : str
+        filepath to tnseeker output file all_insertions.csv. 
+        It should contain the columns "Read Counts", "Gene Name" and "Relative Position in Gene (0-1)".
+    minsize : int
+        Minimum grid size to simulate.
+    maxsize : int
+       Maximum grid size to simulate.
+    number_of_simulations : int
+        Number of simulations to perform between minsize and maxsize. 
+        I.e. if the number_of_simulations is 2, 
+        only simulations of minsize and maxsize are performed. 
+    output_filename : str, optional
+        Filepath for simulation output.
+        by default : accuracy_simulation.csv
+    output_plot : str, optional
+        Filepath for simulation plot.
+        by default : accuracy_simulation.pdf
+        
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with precision and recall for a simulated deconvolution for 
+        a 3D and 4D grid of well plates.
+    matplotlib.Axis
+        Scatter plot of number of mutants vs recall (or precision)
+    """
+    matplotlib.use('Agg')
+    print("Simulating deconvolution runs for grids of sizes between", str(minsize), 
+          "and", str(maxsize), "!")
+
+    res = simulate_deconvolution(data = tnseeker_output_path, 
+                                minsize = minsize,
+                                maxsize = maxsize,
+                                number_of_simulations = number_of_simulations) 
+    
+    prec_ax, rec_ax = plot_precision_recall(res)
+
+    print("Plotting results to precision_"+str(output_plot), "!")
+    matplotlib.pyplot.savefig(prec_ax)
+    print("Plotting results to recall_"+str(output_plot), "!")
+    matplotlib.pyplot.savefig(rec_ax)
     print("Saving results to", str(output_filename), "!")
     res.to_csv(output_filename, index=False)
     print("Done!")
