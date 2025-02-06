@@ -286,6 +286,7 @@ def plot_precision_recall(result_df):
     prec_ax.set_xlabel("Number of mutants in arrayed library")
     prec_ax.set_ylabel("Precision")
     prec_ax.spines[['right', 'top']].set_visible(False)
+    prec_ax.legend(frameon=False)
     plt.tight_layout()
 
 
@@ -299,6 +300,7 @@ def plot_precision_recall(result_df):
     rec_ax.set_xlabel("Number of mutants in arrayed library")
     rec_ax.set_ylabel("Recall")
     rec_ax.spines[['right', 'top']].set_visible(False)
+    rec_ax.legend(frameon=False)
     plt.tight_layout()
 
     return prec_fig, rec_fig
