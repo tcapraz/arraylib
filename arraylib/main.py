@@ -2,6 +2,7 @@ from arraylib.libraryexperiment import LibraryExperiment
 import sys
 import click
 import pandas as pd
+import numpy as np
 import matplotlib
 from arraylib.simulations import simulate_required_arraysize, simulate_deconvolution, plot_precision_recall
 
@@ -317,9 +318,14 @@ def deconvolve_validation(count_matrix, exp_design, cores, gb_ref, filter_thr, g
               type=str,
               default="arraysize_simulation.pdf",
               help='Path for simulation output plot')
+@click.option("--seed", '-s',
+              metavar='<int>',
+              type=int,
+              default=None,
+              help='Seed for random number generator')
 def plot_required_arraysize(tnseeker_output_path, minsize, maxsize, number_of_simulations, 
                                 number_of_repeats, gene_start, 
-                                gene_end, output_filename, output_plot):
+                                gene_end, output_filename, output_plot, seed):
     """
     Run simulation of how many mutants need to be picked for the arrayed 
     library to reach a certain number of unique genes. Simulations are based 
@@ -372,9 +378,10 @@ def plot_required_arraysize(tnseeker_output_path, minsize, maxsize, number_of_si
                                 number_of_simulations = number_of_simulations, 
                                 number_of_repeats = number_of_repeats, 
                                 gene_start = gene_start,
-                                gene_end = gene_end)
+                                gene_end = gene_end,
+                                seed = seed)
     print("Plotting results to", str(output_plot), "!")
-    matplotlib.pyplot.savefig(output_plot)
+    plot.savefig(output_plot)
     print("Saving results to", str(output_filename), "!")
     res.to_csv(output_filename, index=False)
     print("Done!")
@@ -394,24 +401,30 @@ def plot_required_arraysize(tnseeker_output_path, minsize, maxsize, number_of_si
 @click.option("--number_of_simulations", '-nsim',
               metavar='<int>',
               type=int,
-              default=100,
+              default=2,
               help='Number of simulations of sizes interpolated between minsize and maxsize')
 @click.option("--output_filename", '-o',
               metavar='<str>',
               type=str,
-              default="accuracy_simulation.csv",
+              default="precision_recall_simulation.csv",
               help='Path for simulation output file')
 @click.option("--output_plot", '-p',
               metavar='<str>',
               type=str,
-              default="accuracy_simulation.pdf",
+              default="simulation.pdf",
               help='Base path for simulation output plot')
+@click.option("--seed", '-s',
+              metavar='<int>',
+              type=int,
+              default=None,
+              help='Seed for random number generator')
 def plot_expected_deconvolution_accuracy(tnseeker_output_path, 
                                          minsize, 
                                          maxsize, 
                                          number_of_simulations, 
                                          output_filename, 
-                                         output_plot):
+                                         output_plot,
+                                         seed):
     """
     Run simulations of count matrices followed by deconvolution. For each simulation
     precision and recall are calculated for a 3D and 4D grid of well plates. 
@@ -447,20 +460,22 @@ def plot_expected_deconvolution_accuracy(tnseeker_output_path,
         Scatter plot of number of mutants vs recall (or precision)
     """
     matplotlib.use('Agg')
-    print("Simulating deconvolution runs for grids of sizes between", str(minsize), 
-          "and", str(maxsize), "!")
+    gridsize=np.linspace(minsize,maxsize, number_of_simulations, dtype=int)
+
+    print("Simulating deconvolution runs for grids of sizes", gridsize.astype(str), "!")
 
     res = simulate_deconvolution(data = tnseeker_output_path, 
                                 minsize = minsize,
                                 maxsize = maxsize,
-                                number_of_simulations = number_of_simulations) 
+                                number_of_simulations = number_of_simulations,
+                                seed = seed) 
     
-    prec_ax, rec_ax = plot_precision_recall(res)
+    prec_plot, rec_plot = plot_precision_recall(res)
 
     print("Plotting results to precision_"+str(output_plot), "!")
-    matplotlib.pyplot.savefig(prec_ax)
+    prec_plot.savefig("precision_" +output_plot)
     print("Plotting results to recall_"+str(output_plot), "!")
-    matplotlib.pyplot.savefig(rec_ax)
+    rec_plot.savefig("recall_" + output_plot)
     print("Saving results to", str(output_filename), "!")
     res.to_csv(output_filename, index=False)
     print("Done!")

@@ -34,8 +34,8 @@ arraylib-run = "arraylib.main:run"
 arraylib-run_on_barcodes = "arraylib.main:run_on_barcodes"
 arraylib-deconvolve = "arraylib.main:deconvolve"
 arraylib-deconvolve_validation = "arraylib.main:deconvolve_validation"
-arraylib-plot_required_arraysize = "arraylib.main:plot_required_arraysize"
-
+arraylib-simulate_required_arraysize = "arraylib.main:plot_required_arraysize"
+arraylib-simulate_deconvolution = "arraylib.main:plot_expected_deconvolution_accuracy"
 [tool.poetry.extras]
 docs = ["Sphinx", "sphinx-rtd-theme", "sphinxcontrib-napoleon", "nbsphinx"]
 notebook = ["jupyter"]

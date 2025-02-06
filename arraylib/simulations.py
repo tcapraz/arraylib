@@ -12,7 +12,8 @@ def simulate_required_arraysize(data,
                                 number_of_simulations, 
                                 number_of_repeats=30, 
                                 gene_start = 0.1, 
-                                gene_end = 0.9):
+                                gene_end = 0.9,
+                                seed=None):
     """
     Wrapper for simulation of how many mutants need to be picked for the arrayed 
     library to reach a certain number of unique genes. Simulations are based 
@@ -51,13 +52,14 @@ def simulate_required_arraysize(data,
 
     """
     arrsize=np.linspace(minsize,maxsize, number_of_simulations, dtype=int)
-    data = pd.read_csv(data)
+    
     
     sim_result = simulate_unique_genes(data, 
                                        arrsize,
                                        number_of_repeats, 
                                        gene_start, 
-                                       gene_end)
+                                       gene_end,
+                                       seed=seed)
     plot = plot_arraysize_vs_unique_genes(sim_result)
     
     return sim_result, plot
@@ -66,15 +68,16 @@ def simulate_unique_genes(data,
                         arrsize,
                         number_of_repeats=30, 
                         gene_start = 0.1, 
-                        gene_end = 0.9):
+                        gene_end = 0.9, 
+                        seed=None):
     """Simulate how many unique genes are picked for a given array size 
     and mutant distribution of a pooled library. Genes can be filtered whether 
     only transposon hits are considered between gene_start and gene_end.
 
     Parameters
     ----------
-    data : pd.DataFrame
-        DataFrame of tnseeker output
+    data : str
+        filepath to tnseeker output file all_insertions.csv. 
         It should contain the columns "Read Counts", "Gene Name" and "Relative Position in Gene (0-1)".
     arrsize : np.array
         array containing arraysizes to simulate
@@ -86,6 +89,8 @@ def simulate_unique_genes(data,
     gene_end : float, optional
         Maximum distance to the start of a gene to be counted as a transposon hit, 
         by default 0.9
+    seed : int, optional
+        random seed for simulations
 
     Returns
     -------
@@ -93,11 +98,12 @@ def simulate_unique_genes(data,
         DataFrame with mean and standard deviation of the number of unique genes and array size
 
     """
-        
+    data = pd.read_csv(data)    
     dist = data["Read Counts"]/np.sum(data["Read Counts"])
 
     result_df = pd.DataFrame(columns = ["Arraysize", "Mean", "Std"], index = arrsize)
-
+    if seed is not None:
+        np.random.seed(seed)
     for i in arrsize:
         result=[]
         for j in range(number_of_repeats):
@@ -120,7 +126,7 @@ def plot_arraysize_vs_unique_genes(result_df):
     result_df : pd.DataFrame
         DataFrame output of simulate_unique_genes_for_arraysize
     Returns
-    matplotlib.Axis
+    matplotlib.Figure
     """
     result_df = result_df.astype(float)
     fig, ax = plt.subplots()
@@ -131,7 +137,7 @@ def plot_arraysize_vs_unique_genes(result_df):
     ax.spines[['right', 'top']].set_visible(False)
     plt.tight_layout()
 
-    return ax
+    return fig
 
 def recall(pred, true):
     correct = 0
@@ -155,18 +161,44 @@ def precision(pred,true):
 def simulate_deconvolution(data,
                            minsize,
                            maxsize,
-                           number_of_simulations
+                           number_of_simulations,
+                           seed=None
                            ):
+    """
+    Simulate deconvolution runs and calculate precision and recall. Simulations are based 
+    on the mutant distribution of a pooled library. 
     
+    Parameters
+    ----------
+    data : str
+        filepath to tnseeker output file all_insertions.csv. 
+        It should contain the columns "Read Counts", "Gene Name" and "Relative Position in Gene (0-1)".
+    minsize : int
+        Minimum array size to simulate.
+    maxsize : int
+       Maximum array size to simulate.
+    number_of_simulations : int
+        Number of simulations to perform between minsize and maxsize. 
+        I.e. if the number_of_simulations is 2, 
+        only simulations of minsize and maxsize are performed. 
+    seed : int, optional
+        random seed for simulations
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with precision and recall for 3D and 4D deconvolution
+    
+    """
+     
     gridsize=np.linspace(minsize,maxsize, number_of_simulations, dtype=int)
     data = pd.read_csv(data)
     poolsize = data.shape[0]
     pool = data["Read Counts"]/np.sum(data["Read Counts"])
     
     result_df = pd.DataFrame(columns = ["Arraysize", "Precision_4D", "Recall_4D", "Precision_3D", "Recall_3D"], index = [s*s*96 for s in gridsize])
-
-    for  s in gridsize:
-    
+    if seed is not None:
+        np.random.seed(seed)
+    for  s in gridsize: 
         row=8
         col=12
         arrsize=s*s*96
@@ -209,7 +241,6 @@ def simulate_deconvolution(data,
             p = w.split("_")
             poisson_mean = np.random.gamma(100,1)
             count_mat.loc[mutant,p] = count_mat.loc[mutant,p] + np.random.poisson(poisson_mean,size=4)
-            count = np.random.poisson(poisson_mean,size=4)
             #3D
             w = wells_3d[i]
             picked_wells_3d[mutant].append(str(w))
@@ -222,16 +253,14 @@ def simulate_deconvolution(data,
         for i in range(count_mat.shape[0]):
             res = fit_nnomp(count_mat.iloc[i], X, dims)
             loc[count_mat.index[i]]=res[0]
-            
-            
             res=fit_nnomp(count_mat_3d.iloc[i], X_3d, dims_3d)
             loc_3d[count_mat_3d.index[i]]=res[0]
+
         result_df.loc[arrsize, "Recall_4D"] = recall(loc,picked_wells)
         result_df.loc[arrsize, "Precision_4D"] = precision(loc,picked_wells)
         result_df.loc[arrsize, "Recall_3D"] = recall(loc_3d,picked_wells_3d)
         result_df.loc[arrsize, "Precision_3D"] = precision(loc_3d,picked_wells_3d)
         result_df.loc[arrsize, "Arraysize"] = arrsize
-
     return result_df
     
 def plot_precision_recall(result_df):
@@ -242,17 +271,17 @@ def plot_precision_recall(result_df):
     result_df : pd.DataFrame
         DataFrame output of simulate_deconvolution
     Returns
-    matplotlib.Axis
+    matplotlib.Figure
     """
     
     result_df = result_df.astype(float)
     cblind_colors = sns.color_palette("colorblind", as_cmap=True)[0:2]
 
-    fig, prec_ax = plt.subplots()
+    prec_fig, prec_ax = plt.subplots()
     prec_ax.plot(result_df["Arraysize"], result_df["Precision_4D"], c= cblind_colors[0], label="4D")
-    prec_ax.scatter(result_df["Arraysize"], result_df["Precision_4D"], c= cblind_colors[0], s=5)
+    prec_ax.scatter(result_df["Arraysize"], result_df["Precision_4D"], c= cblind_colors[0], s=10)
     prec_ax.plot(result_df["Arraysize"], result_df["Precision_3D"], c= cblind_colors[1], label="3D")
-    prec_ax.scatter(result_df["Arraysize"], result_df["Precision_3D"], c= cblind_colors[1], s=5)
+    prec_ax.scatter(result_df["Arraysize"], result_df["Precision_3D"], c= cblind_colors[1], s=10)
 
     prec_ax.set_xlabel("Number of mutants in arrayed library")
     prec_ax.set_ylabel("Precision")
@@ -261,15 +290,15 @@ def plot_precision_recall(result_df):
 
 
     
-    fig, rec_ax = plt.subplots()
+    rec_fig, rec_ax = plt.subplots()
     rec_ax.plot(result_df["Arraysize"], result_df["Recall_4D"], c= cblind_colors[0], label="4D")
-    rec_ax.scatter(result_df["Arraysize"], result_df["Recall_4D"], c= cblind_colors[0], s=5)
+    rec_ax.scatter(result_df["Arraysize"], result_df["Recall_4D"], c= cblind_colors[0], s=10)
     rec_ax.plot(result_df["Arraysize"], result_df["Recall_3D"], c= cblind_colors[1], label="3D")
-    rec_ax.scatter(result_df["Arraysize"], result_df["Recall_3D"], c= cblind_colors[1], s=5)
+    rec_ax.scatter(result_df["Arraysize"], result_df["Recall_3D"], c= cblind_colors[1], s=10)
 
     rec_ax.set_xlabel("Number of mutants in arrayed library")
     rec_ax.set_ylabel("Recall")
     rec_ax.spines[['right', 'top']].set_visible(False)
     plt.tight_layout()
 
-    return prec_ax, rec_ax
+    return prec_fig, rec_fig

@@ -18,6 +18,7 @@ Welcome to arraylib's documentation!
    :caption: Tutorials:
    
    notebooks/installation
+   notebooks/run_simulations
    notebooks/run_test_data_interactive
    notebooks/run_test_data_cmdline
    
