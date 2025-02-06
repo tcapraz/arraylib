@@ -23,7 +23,7 @@ def test_simulate_required_arraysize(ddir):
     
 def test_simulate_unique_genes(ddir):
     
-    data = pd.read_csv(os.path.join(str(ddir),"tnseeker_test_output.csv"))
+    data = os.path.join(str(ddir),"tnseeker_test_output.csv")
     arrsize=np.linspace(0,500, 5)
 
     
@@ -37,7 +37,7 @@ def test_simulate_unique_genes(ddir):
     assert ~np.any(res.isna())
 
 def test_plot_arraysize_vs_unique_genes(ddir):
-    data = pd.read_csv(os.path.join(str(ddir),"tnseeker_test_output.csv"))
+    data = os.path.join(str(ddir),"tnseeker_test_output.csv")
     arrsize=np.linspace(0,500, 5)
 
     
