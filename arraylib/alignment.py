@@ -2,6 +2,7 @@
 
 import subprocess
 import os
+from tnseeker.extras.helper_functions import bowtie2parser
 
 from arraylib.io import txt_writer
 
@@ -31,32 +32,17 @@ def parse_bowtie2_output(experiment):
     with open(align_res) as current:
         for line in current:
             line = line.split('\t')
-            if (line[0][0] != "@") and (line[0][0] != ">"): #ignores headers and unaligned contigs
-                id_str = line[0]
-                flag_sum = int(line[1])
-                ref = line[2]
-                coord = int(line[3])
-                quality = int(line[4])
-                cigar = line[5]
-                multi = "XS:i:" in line
-                orientation = '+'
-                if flag_sum == flag_list[1]:
-                    orientation = '-'
-                    # considers CIGAR scores. S means that the read is clipped, so the position will actually be different
-                    # do we need that in end to end mode?
-                    # matches = findall(r'(\d+)([A-Z]{1})', cigar)
-                    # clipped = 0
-                    # for match in matches:
-                    #     if match[1] == "S":
-                    #         clipped=int(match[0])
-                    #         break #only consideres the first one at the start
-                    # coord = coord + len(line[9]) - clipped
-                    # subtract 2 if tn is in reverse direction
-                    coord = coord + len(line[9]) - 2
-                if (flag_sum in flag_list) & (multi==False) & (quality >= experiment.map_quality):
-                    read_id,pool,barcode = id_str.split(":")
-                    out.append(f"{read_id},{pool},{coord},{orientation},{barcode},{ref}\n")
-            #if psutil.virtual_memory().percent>=80:
+            sam_output = bowtie2parser(line,experiment.map_quality,flag_list)
+
+            if "aligned_valid_reads" in sam_output:
+                read_id,pool,barcode = line[0].split(":")
+                out.append(f"{read_id},
+                            {pool},
+                            {sam_output["local"]},
+                            {sam_output["orientation"]},
+                            {barcode},
+                            {sam_output["contig"]}\n")
+
             if len(out)>500000:
                 txt_writer(outfile, out)
                 out=[]

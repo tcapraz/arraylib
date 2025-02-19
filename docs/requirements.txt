@@ -5,4 +5,5 @@ pandas
 numba
 scipy
 biopython
-
+fast2q>=2.7.4
+tnseeker>=1.1.0.1
