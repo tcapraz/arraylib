@@ -36,12 +36,7 @@ def parse_bowtie2_output(experiment):
 
             if "aligned_valid_reads" in sam_output:
                 read_id,pool,barcode = line[0].split(":")
-                out.append(f"{read_id},
-                            {pool},
-                            {sam_output["local"]},
-                            {sam_output["orientation"]},
-                            {barcode},
-                            {sam_output["contig"]}\n")
+                out.append(f"{read_id},{pool},{sam_output['local']},{sam_output['orientation']},{barcode},{sam_output['contig']}\n")
 
             if len(out)>500000:
                 txt_writer(outfile, out)

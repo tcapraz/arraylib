@@ -1,5 +1,6 @@
 import pytest
-from arraylib.trimming import seq2bin, binary_subtract, border_finder, barcode_extractor, read_data
+from fast2q.fast2q import seq2bin, binary_subtract, border_finder, sequence_tinder
+from arraylib.trimming import read_data
 from arraylib.libraryexperiment import LibraryExperiment
 from arraylib.config import set_up_tmpdir
 import numpy as np
@@ -37,14 +38,29 @@ def test_border_finder():
     assert border_finder(bar3, seq, 1) == 2
 
 
-def test_barcode_extractor():
+def test_sequence_tinder():
     
-    seq  = seq2bin("AAACTGCAAAACCC")
+    seq = "AAACTGCAAAACCC\n"
+    up = "AAA"
+    down = "ACCC"
+
+    quality = "IIIIIIIIIIIIIIIIIIIIIIIIIIIII".encode("utf-8")
+
+    barcode_info = {'upstream':up,
+                    'downstream':down,
+                    'upstream_bin':[seq2bin(up)],
+                    'downstream_bin':[seq2bin(down)],
+                    'miss_search_up':0,
+                    'miss_search_down':0,
+                    'quality_set_up':set(""),
+                    'quality_set_down':set("")}
     
-    up = seq2bin("AAA")
-    down = seq2bin("ACCC")
-    
-    assert barcode_extractor(up, down, seq) == (0,9)
+    barcode = "CTGCAAA"
+
+    start,end = sequence_tinder(seq2bin(seq), quality, barcode_info)
+    extracted = seq[start:end]
+
+    assert extracted == barcode
 
 
 def test_read_data(ddir):
@@ -61,3 +77,5 @@ def test_read_data(ddir):
             os.remove(outfile_path)
     assert outfile_path  == os.path.join("temp","test_trimmed_seq.fastq")
     assert contents == truecontents
+
+    

@@ -1,5 +1,5 @@
 import pytest
-from arraylib.trimming import seq2bin, binary_subtract, border_finder, barcode_extractor, read_data
+from arraylib.trimming import file_prep
 from arraylib.libraryexperiment import LibraryExperiment
 from arraylib.config import set_up_tmpdir
 from arraylib.generate_count_matrix import get_hash_ids, table_lookup, get_pool_table_line, get_count_matrix, filter_barcodes
