@@ -3,6 +3,7 @@
 import os
 from pathlib import Path
 import pandas as pd
+import subprocess
 
 
 
@@ -85,3 +86,23 @@ def set_up_tmpdir():
         os.makedirs("temp")
     
 
+
+def run_tnseeker(input_dir,cores,map_quality,seq_quality,gb_ref,tn_seq,tn_mismatch,annotation_type,seq_type,name):
+    
+    """
+    Calls tnseeker to map transposon insertions to a genome, and annotates them.
+    """
+
+    subprocess.call(["tnseeker", 
+                     "--ne",
+                     "--cpu", str(cores),
+                     "-s", str(name),
+                     "-sd",  str(input_dir),
+                     "-ad", str(gb_ref),
+                     "-at", str(annotation_type),
+                     "-st", str(seq_type),
+                     "--tn", str(tn_seq),
+                     "--m", str(tn_mismatch),
+                     "--ph", str(seq_quality),
+                     "--mq", str(map_quality),
+                     "--ig","100000"])

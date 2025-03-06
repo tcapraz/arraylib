@@ -2,8 +2,6 @@
 
 import os
 
-
-
 def writing_arg_decider(path):
     """
     whether to create or append to file.
@@ -35,5 +33,3 @@ def file_compiler(outputed,inputed):
                     out.write(line)
             os.remove(path)
         out.close()
-        
-        

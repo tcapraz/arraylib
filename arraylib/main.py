@@ -1,10 +1,11 @@
 from arraylib.libraryexperiment import LibraryExperiment
-import sys
+import os
 import click
 import pandas as pd
 import numpy as np
 import matplotlib
 from arraylib.simulations import simulate_required_arraysize, simulate_deconvolution, plot_precision_recall
+from arraylib.config import run_tnseeker
 
 @click.command()
 @click.argument("input_dir", type=str)
@@ -275,9 +276,12 @@ def deconvolve_validation(count_matrix, exp_design, cores, gb_ref, filter_thr, g
     print("Inferring most likely locations and writing location summary!")
     experiment.deconvolve_validation()
     print("Done!")
-    
+
 @click.command()
-@click.argument("tnseeker_output_path", type=str)
+@click.option("--tnseeker_output_path", 
+                type=str,
+                default=None,
+                help='Path to tnseeker mapped insertions file. If none is provided, tnseeker will be automatically ran and create one.')
 @click.option("--minsize", '-min',
               metavar='<int>',
               type=int,
@@ -323,9 +327,56 @@ def deconvolve_validation(count_matrix, exp_design, cores, gb_ref, filter_thr, g
               type=int,
               default=None,
               help='Seed for random number generator')
+@click.option("--input_dir", 
+                type=str)
+@click.option("--cores", '-c',
+              metavar='<str>',
+              type=int,
+              default=1,
+              help='Number of cpu cores to use')
+@click.option("--map_quality", '-mq',
+              metavar='<int>',
+              type=int,
+              default=30,
+              help='Minimum bowtie2 alignment quality score to include read')
+@click.option("--seq_quality", '-sq',
+              metavar='<int>',
+              type=int,
+              default=10,
+              help='Minimum phred score for each base to include read')
+@click.option("--gb_ref", '-gb',
+              metavar='<str>',
+              type=str,
+              help='Path to the reference file + FASTA (both are required)')
+@click.option("--tn_seq", '-t',
+              metavar='<str>',
+              type=str,
+              help='Transposon sequence')
+@click.option("--tn_mismatch", '-tm',
+              metavar='<int>',
+              type=int,
+              default=1,
+              help='Number of transposon mismatches allowed')
+@click.option("--annotation_type", '-at',
+              metavar='<str>',
+              type=str,
+              default="GB",
+              help='Reference file type: GB or GFF')
+@click.option("--seq_type", '-st',
+              metavar='<str>',
+              type=str,
+              default="SE",
+              help='Single-end (SE) or pair-end (PE)')
+@click.option("--name", '-na',
+              metavar='<str>',
+              type=str,
+              default="tnseeker_out",
+              help='Name of the reference files (both reference and FASTA need to match)')
 def plot_required_arraysize(tnseeker_output_path, minsize, maxsize, number_of_simulations, 
                                 number_of_repeats, gene_start, 
-                                gene_end, output_filename, output_plot, seed):
+                                gene_end, output_filename, output_plot, seed, input_dir, cores,
+                                map_quality, seq_quality, gb_ref, tn_seq, tn_mismatch, 
+                                annotation_type, seq_type, name):
     """
     Run simulation of how many mutants need to be picked for the arrayed 
     library to reach a certain number of unique genes. Simulations are based 
@@ -368,6 +419,20 @@ def plot_required_arraysize(tnseeker_output_path, minsize, maxsize, number_of_si
     matplotlib.Axis
         Scatter plot of unique genes vs size of arrayed library 
     """
+
+    if tnseeker_output_path is None:
+        run_tnseeker(input_dir,
+                    cores,
+                    map_quality,
+                    seq_quality,
+                    gb_ref, 
+                    tn_seq, 
+                    tn_mismatch, 
+                    annotation_type,
+                    seq_type,
+                    name)
+        tnseeker_output_path = os.path.join(os.getcwd(), name, f"all_insertions_{name}.csv")
+
     matplotlib.use('Agg')
     print("Simulating unique genes for arraysizes between", str(minsize), 
           "and", str(maxsize), "!")
@@ -380,6 +445,7 @@ def plot_required_arraysize(tnseeker_output_path, minsize, maxsize, number_of_si
                                 gene_start = gene_start,
                                 gene_end = gene_end,
                                 seed = seed)
+    
     print("Plotting results to", str(output_plot), "!")
     plot.savefig(output_plot)
     print("Saving results to", str(output_filename), "!")
@@ -387,7 +453,12 @@ def plot_required_arraysize(tnseeker_output_path, minsize, maxsize, number_of_si
     print("Done!")
     
 @click.command()
-@click.argument("tnseeker_output_path", type=str)
+@click.option("--input_dir",
+              type=str)
+@click.option("--tnseeker_output_path", 
+                type=str,
+                default=None,
+                help='Path to tnseeker mapped insertions file. If none is provided, tnseeker will be automatically ran and create one.')
 @click.option("--minsize", '-min',
               metavar='<int>',
               type=int,
@@ -418,13 +489,58 @@ def plot_required_arraysize(tnseeker_output_path, minsize, maxsize, number_of_si
               type=int,
               default=None,
               help='Seed for random number generator')
+@click.option("--cores", '-c',
+              metavar='<str>',
+              type=int,
+              default=1,
+              help='Number of cpu cores to use')
+@click.option("--map_quality", '-mq',
+              metavar='<int>',
+              type=int,
+              default=30,
+              help='Minimum bowtie2 alignment quality score to include read')
+@click.option("--seq_quality", '-sq',
+              metavar='<int>',
+              type=int,
+              default=10,
+              help='Minimum phred score for each base to include read')
+@click.option("--gb_ref", '-gb',
+              metavar='<str>',
+              type=str,
+              help='Path to the reference file + FASTA (both are required)')
+@click.option("--tn_seq", '-t',
+              metavar='<str>',
+              type=str,
+              help='Transposon sequence')
+@click.option("--tn_mismatch", '-tm',
+              metavar='<int>',
+              type=int,
+              default=1,
+              help='Number of transposon mismatches allowed')
+@click.option("--annotation_type", '-at',
+              metavar='<str>',
+              type=str,
+              default="GB",
+              help='Reference file type: GB or GFF')
+@click.option("--seq_type", '-st',
+              metavar='<str>',
+              type=str,
+              default="SE",
+              help='Single-end (SE) or pair-end (PE)')
+@click.option("--name", '-na',
+              metavar='<str>',
+              type=str,
+              default="SE",
+              help='Name of the reference files (both reference and FASTA need to match)')
 def plot_expected_deconvolution_accuracy(tnseeker_output_path, 
                                          minsize, 
                                          maxsize, 
                                          number_of_simulations, 
                                          output_filename, 
                                          output_plot,
-                                         seed):
+                                         seed, input_dir, cores,
+                                         map_quality, seq_quality, gb_ref, tn_seq, tn_mismatch, 
+                                         annotation_type, seq_type, name):
     """
     Run simulations of count matrices followed by deconvolution. For each simulation
     precision and recall are calculated for a 3D and 4D grid of well plates. 
@@ -459,6 +575,19 @@ def plot_expected_deconvolution_accuracy(tnseeker_output_path,
     matplotlib.Axis
         Scatter plot of number of mutants vs recall (or precision)
     """
+    if tnseeker_output_path is None:
+        run_tnseeker(input_dir,
+                    cores,
+                    map_quality,
+                    seq_quality,
+                    gb_ref, 
+                    tn_seq, 
+                    tn_mismatch, 
+                    annotation_type,
+                    seq_type,
+                    name)
+        tnseeker_output_path = os.path.join(os.getcwd(), name, f"all_insertions_{name}.csv")
+    
     matplotlib.use('Agg')
     gridsize=np.linspace(minsize,maxsize, number_of_simulations, dtype=int)
 

@@ -57,7 +57,7 @@ def read_data(file, experiment):
     quality_set = set(quality_list[:int(experiment.seq_quality)-1])
 
     for line in f:
-        reading.append(line[:-1])
+        reading.append(line.rstrip())
 
         if len(reading) == 4:
             count+=1
@@ -107,7 +107,7 @@ def detect_barcodes(file, experiment):
     count = 0
 
     for line in f:
-        reading.append(line[:-1])
+        reading.append(line.rstrip())
 
         if len(reading) == 4:
             read = reading[1]
