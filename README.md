@@ -8,10 +8,10 @@
 
 # Installation as Python package
 
-To install `arraylib` first create `Python 3.8` environment e.g. by
+To install `arraylib` first create `Python 3.10` environment e.g. by
 
 ```
-conda create --name arraylib-env python=3.8
+conda create --name arraylib-env python=3.10
 conda activate arraylib-env
 ```
 
@@ -62,4 +62,5 @@ A detailed manual how to run `arraylib` interactively and from the command line 
 Baym, M., Shaket, L., Anzai, I.A., Adesina, O. and Barstow, B., 2016. Rapid construction of a whole-genome transposon insertion collection for Shewanella oneidensis by Knockout Sudoku. Nature communications, 7(1), p.13270.\
 <a id="2">[2]</a> 
 Langmead, B. and Salzberg, S.L., 2012. Fast gapped-read alignment with Bowtie 2. Nature methods, 9(4), pp.357-359.
+
 
